@@ -1,4 +1,6 @@
 import time
+import sys
+from tqdm import tqdm
 
 def desc_prep(desc):
 	"""
@@ -25,29 +27,27 @@ def lgbt(iterable, desc=" ", miniters=2500, placeholder='▋'):
 	number_of_colours = len(colours)
 	total = len(iterable)
 	bar_width = 56  
-	sticks = bar_width // len(colours)
+	step = bar_width // number_of_colours
 	miniters = max(1, total/miniters)
+
+	free_spaces = " " * 8
+	bar = colours[0] + free_spaces + colours[1] + free_spaces + colours[2] + free_spaces + colours[3] + free_spaces + colours[4] + free_spaces + colours[5] + free_spaces + colours[6] + free_spaces
 	
 	start = time.perf_counter()
 	for i, data in enumerate(iterable, 1):
 		yield data
 
 		if i % miniters == 0:
+			
 			end = time.perf_counter() - start
-			filled = round(i / total * bar_width) 
-			empty = bar_width - filled  
-
-			bar = placeholder * filled + " " * empty  
+			filled = round(i / total * bar_width)
+			current_colour = colours[(filled-1)//step]
 			percent = (i / total) * 100  
 
-			painted_bar = "".join(colours[i // (bar_width // number_of_colours)]  + c if i % (bar_width // number_of_colours) == 1 else c for i, c in enumerate(bar,1))
-
-			current_colour = colours[(filled-1)//sticks]
-			percent_str = f'{current_colour}{percent:03.0f}%'
-			time_str = f'[{end:.2f}s, '
-			it_per_sec_str = f'{i/end:.2f}it/s]' + (" ") 
-			iterations_str = f'[{i}/{total}]'
-
-			print(f"\r{desc}{percent_str} {painted_bar}{current_colour}{iterations_str} {time_str} {it_per_sec_str}\033[0m", end="", flush=True)
-
-	print("\033[0m")  
+			sys.stdout.write(
+				f"\r{desc}{current_colour}{percent:03.0f}% {bar.replace(' ', placeholder, filled)}{current_colour}[{i}/{total}] [{end:.2f}s, {i/end:.2f}it/s]  \033[m")
+			sys.stdout.flush()
+	
+for i in lgbt(range(100)):
+	time.sleep(0.1)
+	j = 0
