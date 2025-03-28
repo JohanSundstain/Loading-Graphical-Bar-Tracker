@@ -2,7 +2,7 @@ import time
 import sys
 
 colours = ["\033[31m", "\033[38;5;214m", "\033[33m", "\033[32m", "\033[36m", "\033[34m", "\033[35m" ]
-heroes = {'rainbow': '🌈', 'unicorn':'🦄', 'teddy': '🧸', 'bunny': '🐰', 'kitten':'🐱', 'sakura':'🌸', 'heart':'🩷'}
+heroes = {'rainbow': '🌈', 'unicorn':'🦄', 'teddy': '🧸', 'bunny': '🐰', 'kitten':'🐱', 'sakura':'🌸', 'heart':'💖'}
 
 def desc_prep(desc, hero):
 	"""
@@ -56,3 +56,4 @@ def lgbt(iterable, desc=" ", miniters=2500, placeholder='▋', hero='rainbow'):
 			sys.stdout.write(
 				f"\r{desc}{current_colour}{percent:03.0f}% {bars[filled]}{current_colour}[{i}/{total}] [{end:.2f}s, {i/end:.2f}it/s]  \033[m")
 			sys.stdout.flush()
+	sys.stdout.write("\n")
