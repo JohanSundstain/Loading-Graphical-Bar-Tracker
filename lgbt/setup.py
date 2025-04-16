@@ -2,11 +2,11 @@ from setuptools import setup, find_packages
 
 setup(
     name="lgbt",  # Уникальное имя пакета
-    version="0.1.0",  # Версия
+    version="0.2.2",  # Версия
     packages=find_packages(),  # Автоматический поиск модулей
     install_requires=[],  # Сюда можно добавить зависимости
-    author="Matvey Kopylov",
-    author_email="kopylovmatveyx@gmai.com",
+    author="Johan Sundstain",
+    author_email="johansundstainx@gmail.com",
     description="Rainbow tqdm",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",

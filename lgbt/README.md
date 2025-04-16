@@ -20,12 +20,3 @@ from lgbt import lgbt
 for i in lgbt(range(100)):
 	time.sleep(0.1)
 ```
-
-
-## Example of output
-```md
-### Запуск скрипта
-```bash
-$ python some_script_with_lgbt.py
-```
-![Console](./screenshot1.png)

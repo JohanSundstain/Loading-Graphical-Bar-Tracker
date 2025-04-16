@@ -23,7 +23,7 @@ def fill_bars(bar_width, placeholder):
 		bars.append(bar.replace(' ', placeholder, i))
 	return bars
 
-def lgbt(iterable, desc=" ", miniters=2500, placeholder='▋', hero='rainbow'):
+def lgbt(iterable, desc=" ", miniters=2500, placeholder='▋', hero='rainbow', total=0):
 	"""
 	Progress bar
 	iterable    - list of elements
@@ -32,13 +32,15 @@ def lgbt(iterable, desc=" ", miniters=2500, placeholder='▋', hero='rainbow'):
 	placeholder - symbol which used in progress bar 
 	hero        - сhoose your smiley face
 	"""
+	global results
+	results = 0
 
 	desc = desc_prep(desc, hero)
 	number_of_colours = len(colours)
 	total = len(iterable)
 	bar_width = 56  
 	step = bar_width // number_of_colours
-	miniters = max(1, total/miniters)
+	miniters = max(1, round(total/miniters))
 	
 	bars = fill_bars(bar_width=bar_width, placeholder=placeholder)
 	
@@ -56,4 +58,5 @@ def lgbt(iterable, desc=" ", miniters=2500, placeholder='▋', hero='rainbow'):
 			sys.stdout.write(
 				f"\r{desc}{current_colour}{percent:03.0f}% {bars[filled]}{current_colour}[{i}/{total}] [{end:.2f}s, {i/end:.2f}it/s]  \033[m")
 			sys.stdout.flush()
+	
 	sys.stdout.write("\n")
