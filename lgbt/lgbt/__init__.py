@@ -1,1 +1,1 @@
-from .lgbt import lgbt
+from .lgbt import lgbt, screenplay
