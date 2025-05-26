@@ -25,6 +25,7 @@ jobs:
       run: python -m build
 
     - name: Publish to PyPI
+      working-directory: ./lgbt
       run: twine upload dist/*
       env:
         TWINE_USERNAME: __token__
