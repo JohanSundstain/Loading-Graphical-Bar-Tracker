@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="lgbt",  # Уникальное имя пакета
-    version="1.0.0",  # Версия
+    version="1.0.1",  # Версия
     packages=find_packages(),  # Автоматический поиск модулей
     install_requires=[],  # Сюда можно добавить зависимости
     author="Johan Sundstain",
