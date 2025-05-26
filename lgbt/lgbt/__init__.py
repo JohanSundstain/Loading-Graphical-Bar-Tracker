@@ -1,1 +1,3 @@
-from .lgbt import lgbt 
+from .lgbt import lgbt
+
+__all__ = ["lgbt"]

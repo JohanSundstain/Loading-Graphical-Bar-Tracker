@@ -81,7 +81,7 @@ class screenplay():
 			'can': __c__(self.placeholder,'RED')* (athird-4) + __c__(self.placeholder,'WHITE') * 13 +__c__('🍁 ','WHITE', 'WHITE') + __c__(self.placeholder,'WHITE') * 13 + __c__(self.placeholder,'RED')*(athird-4),
 			'jpn': __c__(self.placeholder,'WHITE') * half + __c__('●','RED','WHITE')+ __c__(self.placeholder,'WHITE') * half,
 			'tur': __c__(self.placeholder, 'RED') * oneseventh + __c__('☪ ','WHITE', 'RED')  + __c__(self.placeholder, 'RED') * (BAR_WIDTH-oneseventh-2),
-			'esp': __c__(self.placeholder,'RED')* (athird-4) + __c__(self.placeholder,'ORANGE') * 3 +__c__('|♕ |','WHITE', 'ORANGE') + __c__(self.placeholder,'ORANGE') * 22 + __c__(self.placeholder,'RED')*(athird-4),
+			'esp': __c__(self.placeholder,'RED')* (athird-4) + __c__(self.placeholder,'ORANGE') * 13 +__c__('♕ ','WHITE', 'ORANGE') + __c__(self.placeholder,'ORANGE') * 13 + __c__(self.placeholder,'RED')*(athird-4),
 			'mex': __c__(self.placeholder,'GREEN') * athird + __c__(self.placeholder,'WHITE') * 9 +__c__('🦅 ','WHITE', 'WHITE') + __c__(self.placeholder,'WHITE') * 9 + __c__(self.placeholder,'RED')* athird,
 			'kaz': __c__(self.placeholder,'BLUE') + __c__('ᝢ','YELLOW','BLUE') + __c__(self.placeholder,'BLUE') * 28 + __c__('✹ ','YELLOW','BLUE') + __c__(self.placeholder,'BLUE') * half,
 			'isr': __c__(self.placeholder,'WHITE')*5 + __c__(self.placeholder,'BLUE')*9  +__c__(self.placeholder,'WHITE')*16 + __c__(' ✡ ','BLUE', 'WHITE') + __c__(self.placeholder,'WHITE')*16  + __c__(self.placeholder,'BLUE') * 9 + __c__(self.placeholder,'WHITE')*5,
