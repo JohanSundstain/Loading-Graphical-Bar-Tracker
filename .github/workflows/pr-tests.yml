@@ -25,4 +25,5 @@ jobs:
         pip install pytest
 
     - name: Run tests
+      working-directory: ./lgbt
       run: pytest
