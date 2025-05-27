@@ -81,3 +81,15 @@ jobs:
 
         # Пушим изменения и тег в origin/release
         git push origin HEAD:release --tags
+
+      # Создание GitHub Release из тега
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.versioning.outputs.new_version }}
+        name: Release v${{ steps.versioning.outputs.new_version }}
+        body: |
+          Автоматический релиз версии v${{ steps.versioning.outputs.new_version }}
+          Коммит: ${{ github.sha }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
