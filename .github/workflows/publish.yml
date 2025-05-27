@@ -1,12 +1,13 @@
-name: Publish Python Package to PyPI
-
+# .github/workflows/publish.yaml
+name: Publish to PyPI
 
 on:
   push:
-    branches: release  # Или другой branch, который вы используете для релизов
+    tags:
+      - 'v*.*.*'  # Только при появлении тега версии
 
 jobs:
-  deploy:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
