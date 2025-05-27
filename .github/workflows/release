@@ -1,0 +1,83 @@
+# .github/workflows/release.yaml
+# Этот workflow автоматически увеличивает версию в pyproject.toml (patch/minor/major)
+# и пушит тег вида vX.Y.Z. Запускается при пуше в ветку release.
+
+# Версия	 Сообщение PR title	    Что произойдёт
+# ------   --------------------   --------------
+# patch	   любое (по умолчанию)	  1.0.0 → 1.0.1
+# minor	   содержит Bump: minor	  1.0.1 → 1.1.0
+# major	   содержит Bump: major	  1.1.2 → 2.0.0
+#
+# Пример: Исправлен флаг испании [Bump: major]
+
+
+name: Auto Bump Version and Tag
+
+on:
+  push:
+    branches:
+      - release  # Только для ветки release
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Клонируем репозиторий и включаем всю историю, чтобы видеть все теги
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    # Устанавливаем зависимости: toml — для чтения/записи pyproject.toml, semver — для управления версией
+    - name: Install toml and git tools
+      run: pip install toml semver
+
+    # Определяем тип изменения версии из последнего коммита
+    # По умолчанию: patch. Если в сообщении коммита есть "Bump: minor" или "Bump: major", переключаемся.
+    - name: Detect bump type
+      id: bump
+      run: |
+        TITLE=$(git log -1 --pretty=%s)
+        echo "PR Title: $TITLE"
+
+        BUMP="patch"
+        if [[ "$TITLE" == *"Bump: minor"* ]]; then BUMP="minor"; fi
+        if [[ "$TITLE" == *"Bump: major"* ]]; then BUMP="major"; fi
+        echo "bump-type=$BUMP" >> $GITHUB_OUTPUT  # Передаем в следующий шаг
+
+    # Повышаем версию в pyproject.toml и пушим тег
+    - name: Bump version and tag
+      run: |
+        python <<EOF
+        import toml, semver
+
+        # Загружаем pyproject.toml
+        pyproject = toml.load("lgbt/pyproject.toml")
+        version = pyproject["project"]["version"]  # Текущая версия
+
+        bump = "${{ steps.bump.outputs.bump-type }}"  # Тип изменения версии
+        new_version = getattr(semver, f"bump_{bump}")(version)  # semver.bump_patch / bump_minor / bump_major
+
+        pyproject["project"]["version"] = new_version  # Обновляем версию
+
+        with open("lgbt/pyproject.toml", "w") as f:
+            toml.dump(pyproject, f)  # Сохраняем файл
+
+        print("::set-output name=new_version::", new_version)  # (необязательно, для вывода)
+        EOF
+
+        # Настройка git
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+
+        # Коммитим обновлённый pyproject.toml и создаем git-тег вида vX.Y.Z
+        git commit -am "Bump version"
+        git tag v$(toml get lgbt/pyproject.toml project.version)
+
+        # Пушим изменения и тег в origin/release
+        git push origin HEAD:release --tags
