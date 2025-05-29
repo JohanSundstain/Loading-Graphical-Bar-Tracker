@@ -54,7 +54,6 @@ def __c__(str, color, background=None):
 
 
 
-
 class screenplay():
 	def __init__(self, country='default'):
 		self.placeholder = '█'
