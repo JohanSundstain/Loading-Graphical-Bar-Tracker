@@ -38,7 +38,7 @@ jobs:
       id: versioning
       working-directory: ./lgbt
       run: |
-        cat <<EOF | python3
+        python <<EOF
 import toml, semver, os
 
 path = 'pyproject.toml'
