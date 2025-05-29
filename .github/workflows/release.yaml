@@ -3,14 +3,13 @@ name: Auto Bump Version and Tag
 on:
   push:
     branches:
-      - release  # Только для ветки release
+      - release
 
 jobs:
   bump-version:
     runs-on: ubuntu-latest
 
     steps:
-    # Клонируем репозиторий и включаем всю историю, чтобы видеть все теги
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
@@ -20,11 +19,9 @@ jobs:
       with:
         python-version: '3.x'
 
-    # Устанавливаем зависимости: toml — для чтения/записи pyproject.toml, semver — для управления версией
     - name: Install dependencies
       run: pip install toml semver
 
-    # Определяем тип изменения версии из последнего коммита
     - name: Detect bump type
       id: bump
       run: |
@@ -37,12 +34,11 @@ jobs:
 
         echo "bump-type=$BUMP" >> $GITHUB_OUTPUT
 
-    # Повышаем версию и сохраняем её в output
     - name: Bump version
       id: versioning
       working-directory: ./lgbt
       run: |
-        python3 -c "
+        cat <<EOF | python3
 import toml, semver, os
 
 path = 'pyproject.toml'
@@ -56,11 +52,10 @@ with open(path, 'w') as f:
 print(f'New version: {new_version}')
 with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
     print(f'new_version={new_version}', file=fh)
-"
+EOF
       env:
         BUMP_TYPE: ${{ steps.bump.outputs.bump-type }}
 
-    # Коммитим и пушим изменения + тег
     - name: Git commit, tag and push
       working-directory: ./lgbt
       run: |
@@ -72,7 +67,6 @@ with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
         git tag v${{ steps.versioning.outputs.new_version }}
         git push origin HEAD:release --tags
 
-    # Создаём GitHub Release
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
