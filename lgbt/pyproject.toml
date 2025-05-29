@@ -1,28 +1,25 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = [ "setuptools>=61.0", "wheel",]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "lgbt"
-version = "1.0.1"
-authors = [
-    { name = "Johan Sundstain", email = "johansundstainx@gmail.com" },
-]
+version = "1.0.2"
 description = "Rainbow tqdm"
 readme = "README.md"
 requires-python = ">=3.6"
-license = { text = "MIT" }
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
+classifiers = [ "Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent",]
+[[project.authors]]
+name = "Johan Sundstain"
+email = "johansundstainx@gmail.com"
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = "test_*.py"
-addopts = "-v"
-
-dependencies = []  # Аналог install_requires
+[project.license]
+text = "MIT"
 
 [project.urls]
+
+[tool.pytest.ini_options]
+testpaths = [ "tests",]
+python_files = "test_*.py"
+addopts = "-v"
+dependencies = []
