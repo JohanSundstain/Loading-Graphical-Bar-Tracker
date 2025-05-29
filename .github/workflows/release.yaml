@@ -84,7 +84,7 @@ jobs:
       with:
         workflow: publish.yaml
         ref: release
-        inputs: |
-          tag_name: v${{ steps.versioning.outputs.new_version }}
+        inputs: >-
+          {"tag_name": "v${{ steps.versioning.outputs.new_version }}"}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
