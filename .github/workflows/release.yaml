@@ -78,3 +78,13 @@ jobs:
           Коммит: ${{ github.sha }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Trigger publish.yaml via workflow_dispatch
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: publish.yaml
+        ref: release
+        inputs: |
+          tag_name: v${{ steps.versioning.outputs.new_version }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
