@@ -20,7 +20,8 @@ jobs:
         python-version: '3.x'
 
     - name: Install dependencies
-      run: pip install toml semver
+      run: |
+        pip install toml semver toml-cli
 
     - name: Detect bump type
       id: bump
@@ -37,6 +38,10 @@ jobs:
       id: versioning
       working-directory: ./lgbt
       run: |
+        # Установка toml-cli глобально (если нужно)
+        python -m pip install --user toml-cli
+        export PATH=$PATH:~/.local/bin
+
         # Читаем текущую версию из pyproject.toml
         CURRENT_VERSION=$(toml get pyproject.toml project.version)
         echo "Current version: $CURRENT_VERSION"
@@ -78,4 +83,3 @@ jobs:
           Коммит: ${{ github.sha }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
