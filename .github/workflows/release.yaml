@@ -3,13 +3,14 @@ name: Auto Bump Version and Tag
 on:
   push:
     branches:
-      - release
+      - release  # Только для ветки release
 
 jobs:
   bump-version:
     runs-on: ubuntu-latest
 
     steps:
+    # Клонируем репозиторий и включаем всю историю, чтобы видеть все теги
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
@@ -19,10 +20,11 @@ jobs:
       with:
         python-version: '3.x'
 
+    # Устанавливаем зависимости: toml — для чтения/записи pyproject.toml, semver — для управления версией
     - name: Install dependencies
-      run: |
-        pip install toml semver toml-cli
+      run: pip install toml semver
 
+    # Определяем тип изменения версии из последнего коммита
     - name: Detect bump type
       id: bump
       run: |
@@ -32,49 +34,47 @@ jobs:
         BUMP="patch"
         if [[ "$TITLE" == *"Bump: minor"* ]]; then BUMP="minor"; fi
         if [[ "$TITLE" == *"Bump: major"* ]]; then BUMP="major"; fi
+
         echo "bump-type=$BUMP" >> $GITHUB_OUTPUT
 
-    - name: Bump version and tag
+    # Повышаем версию и сохраняем её в output
+    - name: Bump version
       id: versioning
       working-directory: ./lgbt
       run: |
-        # Установка toml-cli глобально (если нужно)
-        python -m pip install --user toml-cli
-        export PATH=$PATH:~/.local/bin
+        python3 -c "
+import toml, semver, os
 
-        # Читаем текущую версию из pyproject.toml
-        CURRENT_VERSION=$(toml get pyproject.toml project.version)
-        echo "Current version: $CURRENT_VERSION"
+path = 'pyproject.toml'
+pyproject = toml.load(path)
+version = pyproject['project']['version']
+bump = os.environ['BUMP_TYPE']
+new_version = getattr(semver, f'bump_{bump}')(version)
+pyproject['project']['version'] = new_version
+with open(path, 'w') as f:
+    toml.dump(pyproject, f)
+print(f'New version: {new_version}')
+with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+    print(f'new_version={new_version}', file=fh)
+"
+      env:
+        BUMP_TYPE: ${{ steps.bump.outputs.bump-type }}
 
-        # Определяем новую версию
-        BUMP_TYPE="${{ steps.bump.outputs.bump-type }}"
-        NEW_VERSION=$(python -c "
-        import semver
-        print(semver.bump_$BUMP_TYPE('$CURRENT_VERSION'))
-        ")
-        echo "New version: $NEW_VERSION"
-
-        # Обновляем pyproject.toml
-        toml set --toml-path pyproject.toml project.version $NEW_VERSION
-
-        # Настраиваем Git
+    # Коммитим и пушим изменения + тег
+    - name: Git commit, tag and push
+      working-directory: ./lgbt
+      run: |
         git config user.name "github-actions"
         git config user.email "github-actions@github.com"
 
-        # Коммитим и создаём тег
         git add pyproject.toml
-        git commit -m "Bump version to $NEW_VERSION"
-        git tag "v$NEW_VERSION"
-
-        # Пушим изменения и тег
+        git commit -m "Bump version to ${{ steps.versioning.outputs.new_version }}"
+        git tag v${{ steps.versioning.outputs.new_version }}
         git push origin HEAD:release --tags
 
-        # Сохраняем новую версию в outputs
-        echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-
+    # Создаём GitHub Release
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
-      if: success()
       with:
         tag_name: v${{ steps.versioning.outputs.new_version }}
         name: Release v${{ steps.versioning.outputs.new_version }}
