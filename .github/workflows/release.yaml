@@ -52,6 +52,7 @@ jobs:
 
     # Повышаем версию в pyproject.toml и пушим тег
     - name: Bump version and tag
+      working-directory: ./lgbt
       run: |
         python <<EOF
         import toml, semver
