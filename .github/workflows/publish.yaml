@@ -2,10 +2,12 @@
 name: Publish to PyPI
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'  # Только при появлении тега версии
-
+  workflow_call:
+    inputs:
+      tag_name:
+        required: true
+        type: string
+        
 jobs:
   publish:
     runs-on: ubuntu-latest
