@@ -39,20 +39,21 @@ jobs:
       working-directory: ./lgbt
       run: |
         python <<EOF
-import toml, semver, os
+        import toml, semver, os
+        
+        path = 'pyproject.toml'
+        pyproject = toml.load(path)
+        version = pyproject['project']['version']
+        bump = os.environ['BUMP_TYPE']
+        new_version = getattr(semver, f'bump_{bump}')(version)
+        pyproject['project']['version'] = new_version
+        with open(path, 'w') as f:
+            toml.dump(pyproject, f)
+        print(f'New version: {new_version}')
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+            print(f'new_version={new_version}', file=fh)
+        EOF
 
-path = 'pyproject.toml'
-pyproject = toml.load(path)
-version = pyproject['project']['version']
-bump = os.environ['BUMP_TYPE']
-new_version = getattr(semver, f'bump_{bump}')(version)
-pyproject['project']['version'] = new_version
-with open(path, 'w') as f:
-    toml.dump(pyproject, f)
-print(f'New version: {new_version}')
-with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-    print(f'new_version={new_version}', file=fh)
-EOF
       env:
         BUMP_TYPE: ${{ steps.bump.outputs.bump-type }}
 
