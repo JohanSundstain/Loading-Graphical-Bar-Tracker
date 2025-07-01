@@ -214,3 +214,4 @@ class lgbt():
 				self._draw()
 				last_update = time.perf_counter()
 		sys.stdout.write("\n")
+

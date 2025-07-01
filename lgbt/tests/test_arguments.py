@@ -42,7 +42,7 @@ def test_gen_run_miniters():
         pass
     
 def test_gen_run_hero():
-    temp = lgbt.lgbt([0,1,2,3,4,5,6,7,8,9], hero='rus')
+    temp = lgbt.lgbt([0,1,2,3,4,5,6,7,8,9], hero='tralalero')
     print("Running with miniters:")
     for i in temp:
         pass
