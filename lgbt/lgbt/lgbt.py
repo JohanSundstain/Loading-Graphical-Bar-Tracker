@@ -53,6 +53,25 @@ def __c__(str, color, background=None):
 	return f"{COLOURS[color]}{str}{RESET}"
 
 
+def translate_time(sec):
+	total_seconds = int(sec)
+	if total_seconds > 3600:
+		hours = total_seconds // 3600
+		remaining_seconds = total_seconds % 3600
+		minutes = remaining_seconds // 60
+		seconds = remaining_seconds % 60
+		return f'{hours}:{minutes:02}:{seconds:02}'
+	else:
+		seconds = total_seconds % 60
+		minutes = total_seconds // 60
+		return f'{minutes:02}:{seconds:02}'
+	
+def translate_iter(iter):
+	if iter > 1000000:
+		return f'{iter/1000000:.0f}Mit/s'
+	if iter > 1000:
+		return f'{iter/1000:.0f}Kit/s'
+	return f'{iter:.0f}it/s'
 
 class screenplay():
 	def __init__(self, country='default'):
@@ -101,7 +120,7 @@ class screenplay():
 		return len(self.bar)
 	
 class lgbt():
-	def __init__(self, iterable=None, desc=" ", miniters=2500, hero='rainbow', total=None, mode='default'):
+	def __init__(self, iterable=None, desc=" ", miniters=2500, minintervals=0.1, hero='rainbow', total=None, mode='default'):
 		self.iterable = iterable
 		self.total = total
 		if inspect.isgenerator(self.iterable):
@@ -111,6 +130,7 @@ class lgbt():
 		if self.total == None:
 			self.total = len(self.iterable)
 		self.miniters = miniters
+		self.minintervals = minintervals
 		self.hero = hero
 		self.desc = desc
 		self.screenplay = screenplay(country=mode)
@@ -145,14 +165,14 @@ class lgbt():
 			self.bars.append(simb)
 	
 	def _draw(self):
-		end = time.perf_counter() - self.start
-		speed = self.iterations / end
+		total_time = time.perf_counter() - self.start
+		speed = self.iterations / total_time 
 		remaining = (self.total - self.iterations) / speed
 		filled = round(self.iterations / self.total * (self.bar_width-1))
 		percent = (self.iterations / self.total) * 100  
 
 		sys.stdout.write(
-			f"\r{self.desc}{percent:03.0f}% {self.bars[filled]} {self.iterations}/{self.total} [{end:03.2f}s{self.anim[filled%4]}{remaining:03.2f}s, {speed:.2f}it/s]{CLEAN}")
+			f"\r{self.desc}{percent:03.0f}% {self.bars[filled]} {self.iterations}/{self.total} [{translate_time(total_time)}{self.anim[int(total_time)%4]}{translate_time(remaining)}, {translate_iter(speed)}]{CLEAN}")
 		sys.stdout.flush()
 
 	def _desc_prep(self):
@@ -184,11 +204,14 @@ class lgbt():
 		#colection = iterable if not inspect.isgenerator(iterable) else range(total)
 
 		self.start = time.perf_counter()
+		last_update = self.start
 
 		for self.iterations, data in enumerate(self.iterable, 1):
 			yield data
+			interval = time.perf_counter() - last_update
 
-			if self.iterations % self.miniters == 0:
+			if self.iterations % self.miniters == 0 or interval >= self.minintervals:
 				self._draw()
-		
+				last_update = time.perf_counter()
 		sys.stdout.write("\n")
+
