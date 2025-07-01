@@ -1,7 +1,20 @@
+import lgbt.lgbt
 import pytest
+import lgbt
 
-def test_addition():
-    assert 1 + 1 == 2
+def test_without_total():
+	try:
+		temp = lgbt.lgbt()
+	except TypeError:
+		assert True
+	else:
+		assert False
+   
 
-def test_subtraction():
-    assert 5 - 3 == 2
+def test_with_total():
+	try:
+		temp = lgbt.lgbt(total=100)
+	except TypeError:
+		assert False
+	else:
+		assert True
