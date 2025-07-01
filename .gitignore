@@ -3,3 +3,4 @@ lgbt/lgbt.egg-info
 lgbt/build
 __pycache__
 .github
+.pytest_cache
