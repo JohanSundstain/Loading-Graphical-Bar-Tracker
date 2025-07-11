@@ -1,5 +1,5 @@
 import pytest
-import lgbt
+import lgbt.lgbt
 
 def my_gen(max):
     current = 0
