@@ -1,6 +1,28 @@
 PH = '█'
+BIG=63
+SHORT=21
+BEGIN = '\033[H'
 RESET ='\033[0m'
 CLEAN = '\033[K'
+
+# set column and row
+def cursor(column, row):
+	print(f"\033[{row};{column}H", end="")
+
+def cursor_str(culumn, row):
+	return "\033[{row};{column}H"
+
+HAND_KEYS = {
+	'BEGIN': '\033[H',
+	'RESET': '\033[0m', 
+	'CLEAN': '\033[0K', 
+	'UP': '\033[A', 
+	'DOWN': '\033[B', 
+	'RIGHT': '\033[C', 
+	'LEFT': '\033[D'
+	}
+
+
 COLOURS = {
 		'RED':"\033[31m",
 		'ORANGE':"\033[38;5;214m",
@@ -10,7 +32,9 @@ COLOURS = {
 		'BRIGHT BLUE':"\033[36m", 
 		'PURPLE':"\033[35m",
 		'BLACK':"\033[30m",
-		'WHITE':"\033[37m"}
+		'WHITE':"\033[37m",
+		'BRIGHT GREEN' :'\033[1;32m'
+		}
 
 BACHGROUND = {
 		'RED':"\033[41m",
@@ -21,7 +45,8 @@ BACHGROUND = {
 		'BRIGHT BLUE':"\033[48;5;39m", 
 		'PURPLE':"\033[45m",
 		'BLACK':"\033[40m",
-		'WHITE':"\033[47m"}
+		'WHITE':"\033[47m"
+		}
 
 HEROES = {
 		'rainbow': '🌈',
@@ -40,6 +65,8 @@ HEROES = {
 		'goozinni':'🪿'
 		}
 
+COLS = {0.0: ' ', 0.125: '▁', 0.25 : '▂', 0.375: '▃', 0.5: '▄', 0.625: '▅', 0.75 : '▆', 0.875: '▇' , 1.0: '█' }
+COLS_KEYS = list(COLS.keys())
 
 def paint(str, color, count, background=None):
 	"""
@@ -63,9 +90,14 @@ def create_string_anim(str):
 	
 	return anim
 
-
 def repeat(str, count):
 	return str * count
+
+
+def upper_bound(value):
+	for i in range(len(COLS_KEYS)) :
+		if COLS_KEYS[i] > value:
+			return COLS[COLS_KEYS[i-1]]
 
 # 63 length all strings
 BIG_FLAGS =  {
@@ -89,24 +121,70 @@ BIG_FLAGS =  {
 
 			'eng': paint('━', 'RED',   31, 'WHITE') + paint('╋','RED',     1, 'WHITE')  + paint('━', 'RED', 31,'WHITE'),
 			'jpn': paint(PH,'WHITE', 31)            + paint('●','RED',     1, 'WHITE')  + paint(PH,'WHITE', 31),
-			'kaz': paint(PH,'BLUE', 30)             + paint(' ✹ ','YELLOW', 1, 'BLUE')  + paint(PH,'BLUE',  30),
+			'kaz': paint(PH,'BLUE', 30)             + paint('☀️ ','YELLOW', 1, 'BLUE')  + paint(PH,'BLUE',  30),
 
 			'mex': paint(PH,'GREEN', 21) + paint(PH,'WHITE', 9) + paint('🦅 ','WHITE', 1, 'WHITE') + paint(PH,'WHITE', 9) + paint(PH,'RED', 21),
-			'ind': paint(PH,'ORANGE',21) + paint(PH,'WHITE', 9) + paint(' ☸ ','BLUE',  1,'WHITE')  + paint(PH,'WHITE', 9) + paint(PH,'GREEN',21),
+			'ind': paint(PH,'ORANGE',21) + paint(PH,'WHITE', 9) + paint('🛞  ','BLUE',  1,'WHITE')  + paint(PH,'WHITE', 9) + paint(PH,'GREEN',21),
 
-			'esp': paint(PH,'RED', 17)   + paint(PH,'ORANGE', 13) + paint(' ♕ ','WHITE', 1, 'ORANGE') + paint(PH,'ORANGE', 13) + paint(PH,'RED', 17),
+			'esp': paint(PH,'RED', 17)   + paint(PH,'YELLOW', 13)  + paint('👑 ','WHITE', 1, 'YELLOW') + paint(PH,'YELLOW', 13) + paint(PH,'RED', 17),
 			'can': paint(PH,'RED', 17)   + paint(PH,'WHITE',  13)  + paint('🍁 ','WHITE', 1,'WHITE')   + paint(PH,'WHITE', 13)  + paint(PH,'RED', 17),
 
 			'isr': paint(PH,'WHITE', 5) + paint(PH,'BLUE', 9)  + paint(PH,'WHITE', 16) + paint(' ✡ ','BLUE', 1, 'WHITE') + paint(PH,'WHITE', 16) + paint(PH,'BLUE', 9) + paint(PH,'WHITE', 5)
-		}
+			}
 
-ARROW_ANIM = ["".join(['<<', paint('<', 'GREEN', 1)]), 
-					"".join(['<', paint('<', 'GREEN', 1),'<']),
-			   		"".join([paint('<', 'GREEN', 1), '<<']),
-					'<<<']
+# 21 length all strings
+SHORT_FLAGS =  {
+			'default': paint(PH,'RED', 3) + paint(PH,'ORANGE', 3) + paint(PH,'YELLOW', 3) + paint(PH,'GREEN', 3) + paint(PH,'BRIGHT BLUE', 3) + paint(PH, 'BLUE', 3) + paint(PH, 'PURPLE', 3),
+			'usa': repeat(paint(PH,'BLUE', 1) + paint('⋆','WHITE', 1, 'BLUE'), 4)  + paint(PH,'BLUE', 1) + repeat(paint(PH,'RED',1) + paint(PH,'WHITE',1), 6),
+			'chn': paint(PH,'RED', 1) + paint('★ ','YELLOW', 1, 'RED') + repeat(paint(PH,'RED',1) + paint('⭑','YELLOW', 1,'RED'), 3) + paint(PH, 'RED', 12),
 
+			'tur': paint(PH, 'RED', 1) + paint('☪ ','WHITE',  1, 'RED')  + paint(PH, 'RED', 18),
+			'ussr':paint(PH,'RED',  1) + paint('☭ ','YELLOW', 1, 'RED') + paint(PH,'RED', 18),
 
-"""SHORT_FLAGS =
-{
+			'rus': paint(PH,'WHITE', 7) + paint(PH,'BLUE',   7) + paint(PH,'RED',    7), 
+			'ita': paint(PH,'GREEN', 7) + paint(PH,'WHITE',  7) + paint(PH,'RED',    7), 
+			'rue': paint(PH,'BLACK', 7) + paint(PH,'YELLOW', 7) + paint(PH,'WHITE',  7),
+			'deu': paint(PH,'BLACK', 7) + paint(PH,'RED',    7) + paint(PH,'ORANGE', 7),
+			'fra': paint(PH,'BLUE',  7) + paint(PH,'WHITE',  7) + paint(PH,'RED',    7),
 
-}"""
+			'swe': paint('━', 'YELLOW', 3,'BRIGHT BLUE') + paint('╋','YELLOW', 1, 'BRIGHT BLUE') + paint('━', 'YELLOW', 17,'BRIGHT BLUE'),
+			'fin': paint('━', 'BLUE',   3,'WHITE')       + paint('╋','BLUE',   1, 'WHITE')       + paint('━', 'BLUE',   17,'WHITE'),
+			'nor': paint('━', 'BLUE',   3 ,'RED')         + paint('╋','BLUE',  1, 'RED')         + paint('━', 'BLUE',   17,'RED'),
+			'dnk': paint('━', 'WHITE',  3,'RED')          + paint('╋','WHITE', 1, 'RED')         + paint('━', 'WHITE',  17,'RED'),
+
+			'eng': paint('━', 'RED',   10, 'WHITE')   + paint('╋','RED',       1, 'WHITE')  + paint('━', 'RED', 10,'WHITE'),
+			'jpn': paint(PH,'WHITE',   10)            + paint('●','RED',       1, 'WHITE')  + paint(PH,'WHITE', 10),
+			'kaz': paint(PH,'BLUE',    9)             + paint('☀️  ','YELLOW', 1, 'BLUE')  + paint(PH,'BLUE',  9),
+
+			'mex': paint(PH,'GREEN', 7) + paint(PH,'WHITE', 2) + paint('🦅 ','WHITE', 1, 'WHITE') + paint(PH,'WHITE', 2) + paint(PH,'RED', 7),
+			'ind': paint(PH,'ORANGE',7) + paint(PH,'WHITE', 2) + paint('🛞  ','BLUE',  1,'WHITE')  + paint(PH,'WHITE', 2) + paint(PH,'GREEN',7),
+
+			'esp': paint(PH,'RED', 6)   + paint(PH,'YELLOW', 3)  + paint('👑 ','WHITE', 1, 'YELLOW') + paint(PH,'YELLOW', 3) + paint(PH,'RED', 6),
+			'can': paint(PH,'RED', 6)   + paint(PH,'WHITE',  3)  + paint('🍁 ','WHITE', 1,'WHITE')   + paint(PH,'WHITE', 3)  + paint(PH,'RED', 6),
+
+			'isr': paint(PH,'WHITE', 2) + paint(PH,'BLUE', 3)  + paint(PH,'WHITE', 4) + paint(' ✡ ','BLUE', 1, 'WHITE') + paint(PH,'WHITE', 4) + paint(PH,'BLUE', 3) + paint(PH,'WHITE', 2),
+
+			'intel' : paint('I', 'BLUE', 1, 'WHITE') + paint('n', 'BLUE', 1, 'WHITE') + paint('t', 'BLUE', 1, 'WHITE')+ paint('e', 'BLUE', 1, 'WHITE')+ paint('L', 'BLUE', 1, 'WHITE') + paint(PH, 'BLUE', 16, 'WHITE'),
+			'amd' : paint('A', 'WHITE', 1, 'RED') +paint('M', 'WHITE', 1, 'RED') +paint('D', 'WHITE', 1, 'RED') + paint('◥', 'WHITE', 1, 'RED') + paint(PH, 'RED', 17),
+			'nvidia': paint('᪤', 'GREEN', 1, 'BLACK') + paint(PH, 'BLACK', 1)+ paint('n', 'WHITE', 1, 'BLACK')+ paint('v', 'WHITE', 1, 'BLACK')+ paint('i', 'WHITE', 1, 'BLACK')+ paint('d', 'WHITE', 1, 'BLACK')+ paint('i', 'WHITE', 1, 'BLACK')+ paint('a', 'WHITE', 1, 'BLACK')+ paint(PH, 'BLACK', 13)
+			}
+
+if __name__  == "__main__":
+	import psutil
+	import os
+
+	# Получаем PID текущего процесса
+	pid = os.getpid()
+	process = psutil.Process(pid)
+
+	# Загрузка CPU текущим процессом (в процентах)
+	process_cpu_percent = process.cpu_percent(interval=1)  # interval=1 для точности
+
+	# Количество логических CPU
+	logical_cores = psutil.cpu_count(logical=True)
+
+	# Загрузка одного ядра (если процесс использует только одно)
+	single_core_usage = process_cpu_percent / logical_cores
+	print(type(process_cpu_percent))
+	print(f"Загрузка CPU текущим процессом: {process_cpu_percent}% (от общего CPU)")
+	print(f"Примерная загрузка одного ядра: {single_core_usage:.1f}%")

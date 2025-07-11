@@ -1,111 +1,76 @@
-from abc import ABC, abstractmethod
+import os
+import time
 
-from consts import RESET, CLEAN, BIG_FLAGS, HEROES, ARROW_ANIM
-from consts import create_string_anim
+from math import sin
 
-class Bar():
-	def __init__(self):
-		pass
-
-	@abstractmethod
-	def show(self):
-		pass
-
-	def translate_time(self, sec):
-		total_seconds = int(sec)
-		if total_seconds > 3600:
-			hours = total_seconds // 3600
-			remaining_seconds = total_seconds % 3600
-			minutes = remaining_seconds // 60
-			seconds = remaining_seconds % 60
-			return f'{hours}:{minutes:02}:{seconds:02}'
-		else:
-			seconds = total_seconds % 60
-			minutes = total_seconds // 60
-			return f'{minutes:02}:{seconds:02}'
-		
-	def translate_count(self, iter):
-		if iter > 1000000:
-			return f'{iter/1000000:.0f}M'
-		if iter > 1000:
-			return f'{iter/1000:.0f}K'
-		return f'{iter:.0f}'
-	
-
-class Anim():
-	def __init__(self, list_anim):
-		self.anim = list_anim
-		self.n = len(self.anim)
-
-	def __call__(self, iter):
-		return self.anim[iter%self.n]
-
+from basicobjects import ClassicBar, TextLabel, ConsoleObject, LegacyBar, GPUBar, CPUBar
+from gist import Gist, Window
 
 # [DESC] [PERCENT] [BAR] [TIME, ITER]
-class CommonBar(Bar):
+class DynemicBar(ConsoleObject):
 	def __init__(self, total, desc, hero, mode):
-		self.bar = BIG_FLAGS[mode].split(RESET)
-		self.bars = []
-		self.total = total
-		self.desc = desc 
-		self.hero = HEROES[hero]
-		self.bar_width = 63
-		self.decs_anim = None 
+		super(DynemicBar, self).__init__()
+		os.system("cls")
+		self._short_bar = LegacyBar(total=total, desc=desc, hero=hero, mode=mode, type='short')
+		self._long_bar = LegacyBar(total=total, desc=desc, hero=hero, mode=mode, type='long')
+		start_time = time.perf_counter()
+		self._short_bar.time = start_time
+		self._long_bar.time = start_time
+		self._console_width = None
+	
+	def update(self, value):
+		self._console_width = os.get_terminal_size().columns
+		self._short_bar.update(value)
+		self._long_bar.update(value)
 
-		if len(self.desc) >= 11:
-			self._desc_func = self._desc_gt
-			self.decs_anim = Anim(create_string_anim(self.desc))
+	def draw(self):
+		if self._console_width < 120:
+			self._short_bar.draw()
 		else:
-			self.desc = desc + (" " * (11-len(desc)))
-			self._desc_func = self._desc_le	
+			self._long_bar.draw()
 
-		self.arrow_anim = Anim(ARROW_ANIM)
+class AdvancedBar(ConsoleObject):
+	def __init__(self, total, desc='', hero='rainbow', mode='default'):
+		super(AdvancedBar, self).__init__()
+		#os.system("cls")
+		self._timer = time.perf_counter()
 
-		self._fill_bar()
+		self._window = Window(Gist())
+		self._shift_column = self._window.size[1]
 
-	def _desc_gt(self, iter):
-		"""
-		Formating description string if it's too long
-		"""
-		return self.decs_anim(iter)[:11]
-	
-	
-	def _desc_le(self, iter):
-		return self.desc
+		self._classic_label = TextLabel(desc='train is all you need', hero=hero, coord=(self._shift_column + 2, 2), n=5)
+		self._gpu_label = TextLabel("GPU", hero='teddy', coord=(self._shift_column + 2, 4), n=5)
+		self._cpu_label = TextLabel("CPU", hero='teddy', coord=(self._shift_column + 2, 6), n=5)
 
+		self._shift_column += len(self._classic_label) + 4
+		
+		self._classic_bar = ClassicBar(total=total, mode=mode, type='short', coord=((self._shift_column, 2)))
+		self._gpu_bar = GPUBar(coord=(self._shift_column, 4))
+		self._cpu_bar = CPUBar(coord=(self._shift_column, 6))
 
-	def _fill_bar(self):
-		n = len(self.bar)
-		curr_str = ""
-		for i, simb in enumerate(self.bar, 1):
-			curr_str += simb
-			self.bars.append((curr_str + RESET) + (" " * (n-i)))
-	
-	def show(self, total_time, current_iter):
-		anim_speed = int(total_time * 5)
+	def update_value(self, value):
+		self._window.update(value) 
 
-		speed = current_iter / total_time
-		remaining =  (self.total - current_iter) / speed 
-		filled =  round(current_iter / self.total * (self.bar_width-1))
+	def draw(self):
+		self._window.draw()
+		self._classic_label.draw()
+		self._gpu_bar.draw()
+		self._cpu_bar.draw()
 
-		current_desc = self._desc_func(anim_speed)
-		percent = (current_iter / self.total) * 100  
+		self._classic_bar.draw()
+		self._gpu_label.draw()
+		self._cpu_label.draw()
 
-		part_of_bar = self.bars[filled]
+	def update(self, value):
+		anim_speed = (time.perf_counter() - self._timer) * 5
+		self._classic_label.update(anim_speed)
 
-		processed_iter = self.translate_count(current_iter)
-		total_iter = self.translate_count(self.total)
+		self._classic_bar.update(value)
+		self._gpu_bar.update()
+		self._cpu_bar.update()
 
-		elapsed_time = self.translate_time(total_time)
-		anim = self.arrow_anim(anim_speed)
-		remainning_time = self.translate_time(remaining)
+	def next(self):
+		self._window.next()
 
-		iter_per_second = self.translate_count(speed) + "it/s"
-	
-		return f"\r{self.hero} {current_desc}{percent:03.0f}% {part_of_bar} {processed_iter}/{total_iter} [{elapsed_time}{anim}{remainning_time}, {iter_per_second}]{CLEAN}"
-
-	
-	def __len__(self):
-		return len(self.bar)
 
 
