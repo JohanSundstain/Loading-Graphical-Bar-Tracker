@@ -1,1 +1,6 @@
 pytest
+numpy
+py-cpuinfo
+setuptools
+psutil
+gputil

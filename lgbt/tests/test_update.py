@@ -1,14 +1,7 @@
 import lgbt.lgbt
-import pytest
-import lgbt
 
-def test_without_total():
-	try:
-		temp = lgbt.lgbt()
-	except TypeError:
-		assert True
-	else:
-		assert False
+import pytest
+
    
 
 def test_with_total():

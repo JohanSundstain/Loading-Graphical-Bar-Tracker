@@ -1,5 +1,5 @@
 import pytest
-import lgbt
+import lgbt.lgbt
 
 def test_init_class():
     temp = lgbt.lgbt(total=1)
