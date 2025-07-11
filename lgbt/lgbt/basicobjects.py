@@ -5,7 +5,8 @@ import psutil
 
 import GPUtil
 from cpuinfo import get_cpu_info
-from consts import cursor, SHORT_FLAGS,BIG_FLAGS, HAND_KEYS, HEROES
+
+from .consts import cursor, SHORT_FLAGS,BIG_FLAGS, HAND_KEYS, HEROES
 
 class Anim():
 	def __init__(self, list_anim):
@@ -218,7 +219,7 @@ class GPUBar(Bar):
 		super().draw()
 		shift = super().__len__()
 		cursor(self.coord[0]+shift+2, self.coord[1])
-		print(f'[{self._stats['mem_used']:.0f}/{self._stats['mem_total']:.0f}MB]', end=HAND_KEYS['CLEAN'])
+		print(f"[{self._stats['mem_used']:.0f}/{self._stats['mem_total']:.0f}MB]", end=HAND_KEYS['CLEAN'])
 
 class CPUBar(Bar):
 	def __init__(self,  mode='default', type='short', coord=(1, 1), total=100):
@@ -241,4 +242,205 @@ class CPUBar(Bar):
 		super().draw()
 		shift = super().__len__()
 		cursor(self.coord[0]+shift+2, self.coord[1])
-		print(f'[{self._stats['mem_used']/ (1024**2):.0f}/{self._stats['mem_total']/(1024**2):.0f}MB]', end=HAND_KEYS['CLEAN'])
+		print(f"[{self._stats['mem_used']/ (1024**2):.0f}/{self._stats['mem_total']/(1024**2):.0f}MB]", end=HAND_KEYS['CLEAN'])
+
+class Tracker:
+	def __init__(self, number=None):
+		if type(number) in [float, int, type(None)]:
+			self._number = number
+		elif type(number) == type(self):
+			self = number
+		else:
+			raise ValueError("Not correct type of variable")
+
+	@property
+	def item(self):
+		return self._number
+	
+	@item.setter
+	def item(self, value):
+		if type(value) in [float, int, type(None)]:
+			self._number = value
+		elif type(value) == type(self):
+			self = value
+		else:
+			raise ValueError("Not correct type of variable")
+
+	
+	def __str__(self):
+		return str(self._number)
+	
+	def __add__(self, value):
+		if type(value) == type(self):
+			return Tracker(self._number + value.item())
+		elif type(value) in [float, int]:
+			return Tracker(self._number + value)
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __sub__(self, value):
+		if type(value) == type(self):
+			return Tracker(self._number - value.item())
+		elif type(value) in [float, int]:
+			return Tracker(self._number - value)
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __mul__(self, value):
+		if type(value) == type(self):
+			return Tracker(self._number * value.item())
+		elif type(value) in [float, int]:
+			return Tracker(self._number * value)
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __truediv__(self, value):
+		if type(value) == type(self):
+			return Tracker(self._number / value.item())
+		elif type(value) in [float, int]:
+			return Tracker(self._number / value)
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __floordiv__(self, value):
+		if type(value) == type(self):
+			return Tracker(self._number // value.item())
+		elif type(value) in [float, int]:
+			return Tracker(self._number // value)
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __mod__(self, value):
+		if type(value) == type(self):
+			return Tracker(self._number % value.item())
+		elif type(value) in [float, int]:
+			return Tracker(self._number % value)
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __pow__(self, value):
+		if type(value) == type(self):
+			return Tracker(self._number ** value.item())
+		elif type(value) in [float, int]:
+			return Tracker(self._number ** value)
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __eq__(self, value):
+		if type(value) == type(self):
+			return self._number == value.item()
+		elif type(value) in [float, int, type(None)]:
+			return self._number == value
+		else:
+			raise ValueError("Not correct type of variable")
+
+	def __ne__(self, value):
+		if type(value) == type(self):
+			return self._number != value.item()
+		elif type(value) in [float, int, type(None)]:
+			return self._number != value
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __lt__(self, value):
+		if type(value) == type(self):
+			return self._number < value.item()
+		elif type(value) in [float, int]:
+			return self._number < value
+		else:
+			raise ValueError("Not correct type of variable")
+
+	def __gt__(self, value):
+		if type(value) == type(self):
+			return self._number > value.item()
+		elif type(value) in [float, int]:
+			return self._number > value
+		else:
+			raise ValueError("Not correct type of variable")
+	
+	def __le__(self, value):
+		if type(value) == type(self):
+			return self._number <= value.item()
+		elif type(value) in [float, int]:
+			return self._number <= value
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __ge__(self, value):
+		if type(value) == type(self):
+			return self._number >= value.item()
+		elif type(value) in [float, int]:
+			return self._number >= value
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __iadd__(self, value):
+		if type(value) == type(self):
+			self._number += value.item()
+			return self
+		elif type(value) in [float, int]:
+			self._number += value
+			return self
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __isub__(self, value):
+		if type(value) == type(self):
+			self._number -= value.item()
+			return self
+		elif type(value) in [float, int]:
+			self._number -= value
+			return self
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __imul__(self, value):
+		if type(value) == type(self):
+			self._number *= value.item()
+			return self
+		elif type(value) in [float, int]:
+			self._number *= value
+			return self
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __itruediv__(self, value):
+		if type(value) == type(self):
+			self._number /= value.item()
+			return self
+		elif type(value) in [float, int]:
+			self._number /= value
+			return self
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __ifloordiv__(self, value):
+		if type(value) == type(self):
+			self._number //= value.item()
+			return self
+		elif type(value) in [float, int]:
+			self._number //= value
+			return self
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __ipow__(self, value):
+		if type(value) == type(self):
+			self._number **= value.item()
+			return self
+		elif type(value) in [float, int]:
+			self._number **= value
+			return self
+		else:
+			raise ValueError("Not correct type of variable")
+		
+	def __pos__(self):
+		self._number = +self._number
+		return self
+	
+	def __neg__(self):
+		self._number = -self._number
+		return self
+
+	def __abs__(self):
+		return +self
