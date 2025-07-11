@@ -1,6 +1,6 @@
 pytest
 numpy
 py-cpuinfo
-distutils
+setuptools
 psutil
 gputil
