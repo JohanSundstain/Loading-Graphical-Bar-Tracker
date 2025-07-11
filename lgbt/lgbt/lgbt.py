@@ -323,25 +323,3 @@ class lgbt():
 				self._draw()
 				last_update = time.perf_counter()
 		print("")
-
-def test_update():
-	bar =  lgbt()
-	for i in range(10):
-		bar.update(1)
-		time.sleep(0.5)
-
-def test_advanced():
-	import random
-	bar = lgbt()
-	running_loss = lgbt.tracker()
-	for j in range(10):
-		running_loss.item = 0
-		for i in bar(range(100), mode="ind",desc="HEllo world!!!", tracker=running_loss):
-			time.sleep(0.1)
-			running_loss += random.uniform(-1,1)
-		bar.next()
-
-
-if __name__ == "__main__":
-	test_advanced()
-	

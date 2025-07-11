@@ -168,23 +168,3 @@ SHORT_FLAGS =  {
 			'amd' : paint('A', 'WHITE', 1, 'RED') +paint('M', 'WHITE', 1, 'RED') +paint('D', 'WHITE', 1, 'RED') + paint('◥', 'WHITE', 1, 'RED') + paint(PH, 'RED', 17),
 			'nvidia': paint('᪤', 'GREEN', 1, 'BLACK') + paint(PH, 'BLACK', 1)+ paint('n', 'WHITE', 1, 'BLACK')+ paint('v', 'WHITE', 1, 'BLACK')+ paint('i', 'WHITE', 1, 'BLACK')+ paint('d', 'WHITE', 1, 'BLACK')+ paint('i', 'WHITE', 1, 'BLACK')+ paint('a', 'WHITE', 1, 'BLACK')+ paint(PH, 'BLACK', 13)
 			}
-
-if __name__  == "__main__":
-	import psutil
-	import os
-
-	# Получаем PID текущего процесса
-	pid = os.getpid()
-	process = psutil.Process(pid)
-
-	# Загрузка CPU текущим процессом (в процентах)
-	process_cpu_percent = process.cpu_percent(interval=1)  # interval=1 для точности
-
-	# Количество логических CPU
-	logical_cores = psutil.cpu_count(logical=True)
-
-	# Загрузка одного ядра (если процесс использует только одно)
-	single_core_usage = process_cpu_percent / logical_cores
-	print(type(process_cpu_percent))
-	print(f"Загрузка CPU текущим процессом: {process_cpu_percent}% (от общего CPU)")
-	print(f"Примерная загрузка одного ядра: {single_core_usage:.1f}%")

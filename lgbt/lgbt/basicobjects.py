@@ -242,17 +242,3 @@ class CPUBar(Bar):
 		shift = super().__len__()
 		cursor(self.coord[0]+shift+2, self.coord[1])
 		print(f'[{self._stats['mem_used']/ (1024**2):.0f}/{self._stats['mem_total']/(1024**2):.0f}MB]', end=HAND_KEYS['CLEAN'])
-
-
-def test_classic():
-	c = ClassicBar(103, type='long', mode='ind')
-	c.coord = (20, 3)
-
-	for j in range(10):
-		for i in range(1, 104):
-			c.update(i)
-			c.draw()
-			time.sleep(0.1)
-
-if __name__ == "__main__":
-	test_classic()
