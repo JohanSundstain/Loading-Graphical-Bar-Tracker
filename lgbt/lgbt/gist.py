@@ -3,7 +3,7 @@ from collections import deque
 
 from numpy import arange
 
-from .consts import COLS, upper_bound, paint, cursor
+from consts import COLS, upper_bound, paint, cursor
 
 class Gist():
 	def __init__(self, size=(5,14), gap=' ', max_value=1.0, fix_value=None, coord=(1,1)):

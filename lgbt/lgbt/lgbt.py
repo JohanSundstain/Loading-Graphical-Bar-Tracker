@@ -3,70 +3,104 @@ import sys
 import inspect
 import os
 
-from .bar import DynemicBar, AdvancedBar
-from .basicobjects import Tracker
+from bar import DynemicBar, AdvancedBar
+from basicobjects import Tracker
 
 
 class lgbt():
-	tracked = False
+	__instances = {}
+
 	@staticmethod
 	def tracker():
 		return Tracker(0.0)
+	
+	@staticmethod
+	def step(tracker):
+		if type(tracker) != Tracker:
+			raise ValueError("Invalid type of tracker")
 
-	def __init__(self, iterable=None, total=None, desc="", miniters=2500, minintervals=0.1, hero='rainbow', mode='default'):
-		self._iterable = iterable
-		self._total = total
-		if inspect.isgenerator(self._iterable):
-			if self._total == None:
-				raise ValueError('The generator was received, but the total is not specified')
-			
-		try:
-			if self._total == None:
-				self._total = len(self._iterable)
-		except TypeError:
-			self._total = 0.0
+		lgbt.__instances[id(tracker)]._next()
 
-		self._miniters = miniters
-		self._minintervals = minintervals
-		self._current_iter = 0
-		self._is_end = False
-		self._bar = DynemicBar(total=self._total, hero=hero, desc=desc, mode=mode)
-		self._miniters = max(1, round(self._total/self._miniters))
+	def __new__(cls, iterable=None, **kwargs):
+		os.system("cls")
+		tracker = kwargs.get('tracker', None)
 
-	def __init__tracker__(self, iterable=None, total=None, desc="", miniters=2500, minintervals=0.1, hero='rainbow', mode='default', tracker=None):
-		if lgbt.tracked:
-			raise PermissionError("The object has already been created")
+		if tracker and id(tracker) in cls.__instances:
+			instance = cls.__instances[id(tracker)]
+			instance._iterable = iterable
+			instance._bar.reset_time()
+			return instance
+		
+		instance = super().__new__(cls)
+		return instance
+
+	def __init__(self, iterable=None, **kwargs):
+		
+		if hasattr(self, '_initialized'):
+			return
+		tracker = kwargs.get('tracker', None)
+
+		if tracker == None:
+			self.__init__legacy__(iterable=iterable, **kwargs)
 		else:
-			os.system("cls")
-			lgbt.tracked = True
+			lgbt.__instances[id(tracker)] = self
+			self.__init__advanced__(iterable=iterable, **kwargs)
 
+		self._initialized = True
+
+	def __init__advanced__(self, iterable=None, total=None, desc="", miniter=2500, mininterval=0.1, hero='rainbow', mode='default', tracker=None):
 		self._iterable = iterable
 		self._total = total
 		if inspect.isgenerator(self._iterable):
 			if self._total == None:
 				raise ValueError('The generator was received, but the total is not specified')
-			
 		if self._total == None:
 			self._total = len(self._iterable)
-
-		self._miniters = miniters
-		self._minintervals = minintervals
 
 		if type(tracker) == Tracker:
 			self._tracker = tracker
 			self._bar = AdvancedBar(total=self._total, hero=hero, desc=desc, mode=mode)
 		else:
 			raise ValueError("Invalid type of tracker")
+		
+		self.__init__base__(miniter=miniter, mininterval=mininterval)
 
+	def __init__legacy__(self, iterable=None, total=None, desc="", miniter=2500, mininterval=0.1, hero='rainbow', mode='default', tracker=None):
+		self._iterable = iterable
+		self._total = total
+		if inspect.isgenerator(self._iterable):
+			if self._total == None:
+				raise ValueError('The generator was received, but the total is not specified')
+
+		try:
+			if self._total == None:
+				self._total = len(self._iterable)
+		except TypeError:
+			self._total = 0.0
+
+		self._bar = DynemicBar(total=self._total, hero=hero, desc=desc, mode=mode)
+		self._tracker = tracker
+
+		self.__init__base__(miniter=miniter, mininterval=mininterval)
+
+	def __init__base__(self, miniter, mininterval):
+		self._miniter = miniter
+		self._mininterval = mininterval
 		self._current_iter = 0
 		self._is_end = False
 
-		self._miniters = max(1, round(self._total/self._miniters))
+		self._miniter = max(1, round(self._total/self._miniter))
 
-	def next(self):
-		if not lgbt.tracked:
-			raise PermissionError("There is no tracker")
+	def _next(self):
 		self._bar.next()
+
+	@property
+	def iterable(self):
+		return self._iterable
+	
+	@iterable.setter
+	def iterable(self, value):
+		self._iterable = value
 
 	def update(self, n=1):
 		self._current_iter += n
@@ -81,24 +115,12 @@ class lgbt():
 
 	def _draw(self):
 		self._bar.update(self._current_iter)
-		if lgbt.tracked:
+		if hasattr(self._bar, "update_value") and self._tracker != None:
 			self._bar.update_value(self._tracker.item)
 		self._bar.draw()
 
-	@property
-	def iterable(self):
-		return self._iterable
-
-	@iterable.setter
-	def iterable(self, value):
-		self._iterable = value
-
 	def __call__(self, iterable, **kwargs):
-		tracker = kwargs.get('tracker', None)
-		if (not lgbt.tracked) and (tracker != None):
-			self.__init__tracker__(iterable, **kwargs)
-		elif tracker == None:
-			self.__init__(iterable, **kwargs)
+		self.__init__(iterable, **kwargs)
 		return self
 	
 	def __iter__(self):
@@ -106,7 +128,7 @@ class lgbt():
 		Progress bar
 		iterable    - list of elements
 		desc        - description
-		miniters    - minimal iterations between update screen
+		miniter    - minimal iterations between update screen
 		placeholder - symbol which used in progress bar 
 		hero        - сhoose your smiley face
 		"""
@@ -117,7 +139,29 @@ class lgbt():
 			yield data
 			interval = time.perf_counter() - last_update
 
-			if self._current_iter % self._miniters == 0 or interval >= self._minintervals:
+			if self._current_iter % self._miniter == 0 or interval >= self._mininterval:
 				self._draw()
 				last_update = time.perf_counter()
 		print("")
+
+
+def test_advanced():
+	import math
+	func = lambda x: math.cos(x)
+	y = 0.0
+	dx = 0.25
+	x = lgbt.tracker()
+	for e in range(100):
+		x.item = 0.0
+		for i in lgbt(range(100), desc="Train", mode='ita', tracker=x):
+			x.item = func(y)
+			y += dx
+			time.sleep(0.5)
+		lgbt.step(x)
+
+		for j in lgbt(range(77), mode='rue'):
+			time.sleep(0.02)
+
+
+if __name__ == "__main__":
+	test_advanced()

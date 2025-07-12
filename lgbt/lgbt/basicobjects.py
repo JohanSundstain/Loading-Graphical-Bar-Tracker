@@ -7,7 +7,7 @@ import threading
 import GPUtil
 from cpuinfo import get_cpu_info
 
-from .consts import cursor, SHORT_FLAGS,BIG_FLAGS, HAND_KEYS, HEROES
+from consts import cursor, SHORT_FLAGS,BIG_FLAGS, HAND_KEYS, HEROES
 
 class Anim():
 	def __init__(self, list_anim):
@@ -29,7 +29,7 @@ class ConsoleObject():
 	
 	@time.setter
 	def time(self, value):
-		self._start_time = value
+		self._time = value
 
 	@property
 	def coord(self):
@@ -144,7 +144,7 @@ class Bar(ConsoleObject):
 		cursor(self._coord[0], self._coord[1])
 		percent = self._stats['percent'] 
 		filled = self._stats['filled']
-		print(f"{percent:03.0f}% {self._part_bars[filled]}",end=HAND_KEYS['CLEAN'])
+		print(f"{percent:03.0f}% {self._part_bars[filled]}",end=HAND_KEYS['CLEAN'])		
 
 	def __len__(self):
 		return self._bar_width + 5
@@ -198,6 +198,7 @@ class LegacyBar(ClassicBar):
 		super().update(value)
 		anim_speed = (time.perf_counter() - self._time) * 10
 		self._text_label.update(anim_speed)
+
 	
 class GPUBar(Bar):
 	def __init__(self, total=100, mode='nvidia', type='short', coord=(1, 1), device_id=0):
