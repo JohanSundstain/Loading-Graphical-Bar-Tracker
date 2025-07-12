@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import time
 import os
 import psutil
+import threading
 
 import GPUtil
 from cpuinfo import get_cpu_info
@@ -201,6 +202,8 @@ class LegacyBar(ClassicBar):
 class GPUBar(Bar):
 	def __init__(self, total=100, mode='nvidia', type='short', coord=(1, 1), device_id=0):
 		super(GPUBar, self).__init__(100, 'nvidia', 'short', coord)
+		self._stop_event = threading.Event()
+
 		self._device_id = device_id
 		self._gpu = GPUtil.getGPUs()[self._device_id]
 		self._stats.update({
@@ -209,8 +212,17 @@ class GPUBar(Bar):
  	       "mem_total": self._gpu.memoryTotal, 
 		})
 
+		threading.Thread(target=self._background_update, daemon=True).start()
+
+	def _background_update(self):
+		while not self._stop_event.is_set():
+			self._gpu = GPUtil.getGPUs()[self._device_id]
+			time.sleep(1)
+
+	def __del__(self):
+		self._stop_event.set()
+
 	def update(self, value=None):
-		self._gpu = GPUtil.getGPUs()[self._device_id]
 		self._stats["gpu_percent"] = self._gpu.load * 100
 		self._stats["mem_used"] = self._gpu.memoryUsed
 		super().update(self._stats["gpu_percent"])
@@ -226,15 +238,25 @@ class CPUBar(Bar):
 		self._brand = 'intel' if 'Intel' in get_cpu_info()['brand_raw'] else 'amd'
 		super(CPUBar, self).__init__(100, self._brand, 'short', coord)
 
+		self._stop_event = threading.Event()
 		self._pid = os.getpid()
 		self._process = psutil.Process(self._pid)
+		self._cpu_cores = psutil.cpu_count(logical=True)
 		self._stats.update({
 			'process_cpu' : self._process.cpu_percent(interval=0.1),
 			'mem_total' :  psutil.virtual_memory().total,
 			'mem_used' : psutil.virtual_memory().used})
+		
+		threading.Thread(target=self._background_update, daemon=True).start()
+
+	def _background_update(self):
+		while not self._stop_event.is_set():
+			self._stats['process_cpu'] = self._process.cpu_percent(interval=1) / self._cpu_cores
+	
+	def __del__(self):
+		self._stop_event.set()
 
 	def update(self, value=None):
-		self._stats['process_cpu'] = self._process.cpu_percent(interval=0.1)
 		self._stats['mem_used'] = psutil.virtual_memory().used
 		super().update(self._stats['process_cpu'])
 
