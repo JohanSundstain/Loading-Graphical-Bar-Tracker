@@ -3,8 +3,8 @@ import time
 
 from math import sin
 
-from .basicobjects import ClassicBar, TextLabel, ConsoleObject, LegacyBar, GPUBar, CPUBar
-from .gist import Gist, Window
+from basicobjects import ClassicBar, TextLabel, ConsoleObject, LegacyBar, GPUBar, CPUBar
+from gist import Gist, Window
 
 # [DESC] [PERCENT] [BAR] [TIME, ITER]
 class DynemicBar(ConsoleObject):
@@ -32,7 +32,6 @@ class DynemicBar(ConsoleObject):
 class AdvancedBar(ConsoleObject):
 	def __init__(self, total, desc='', hero='rainbow', mode='default'):
 		super(AdvancedBar, self).__init__()
-		#os.system("cls")
 		self._timer = time.perf_counter()
 
 		self._window = Window(Gist())
@@ -72,5 +71,10 @@ class AdvancedBar(ConsoleObject):
 	def next(self):
 		self._window.next()
 
+	def reset_time(self):
+		start_time = time.perf_counter()
+		self._classic_bar.time = start_time 
+		self._gpu_bar.time = start_time
+		self._cpu_bar.time = start_time
 
 
