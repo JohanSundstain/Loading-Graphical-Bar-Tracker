@@ -7,7 +7,7 @@ name = "lgbt"
 version = "2.0.10"
 description = "Rainbow tqdm"
 readme = "README.md"
-requires-python = ">=3.6"
+requires-python = ">=3.10"
 classifiers = [ "Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent",]
 [[project.authors]]
 name = "Johan Sundstain"
@@ -22,4 +22,10 @@ text = "MIT"
 testpaths = [ "tests",]
 python_files = "test_*.py"
 addopts = "-v"
-dependencies = []
+dependencies = [
+	"setuptools==75.8.0",
+	"psutil==6.1.1",
+	"GPUtil==1.4.0",
+	"numpy==2.2.6",
+	"py-cpuinfo==9.0.0"
+	]
