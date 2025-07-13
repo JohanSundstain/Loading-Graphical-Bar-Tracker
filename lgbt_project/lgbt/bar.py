@@ -37,9 +37,9 @@ class AdvancedBar(ConsoleObject):
 		self._window = Window(Gist())
 		self._shift_column = self._window.size[1]
 
-		self._classic_label = TextLabel(desc='train is all you need', hero=hero, coord=(self._shift_column + 2, 2), n=5)
-		self._gpu_label = TextLabel("GPU", hero='teddy', coord=(self._shift_column + 2, 4), n=5)
-		self._cpu_label = TextLabel("CPU", hero='teddy', coord=(self._shift_column + 2, 6), n=5)
+		self._classic_label = TextLabel(desc=desc, hero=hero, coord=(self._shift_column + 2, 2), n=5)
+		self._gpu_label = TextLabel("GPU", hero='gpu', coord=(self._shift_column + 2, 4), n=5)
+		self._cpu_label = TextLabel("CPU", hero='cpu', coord=(self._shift_column + 2, 6), n=5)
 
 		self._shift_column += len(self._classic_label) + 4
 		

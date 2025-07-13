@@ -16,6 +16,7 @@ class lgbt():
 		if type(tracker) != Tracker:
 			raise ValueError("Invalid type of tracker")
 
+		
 		lgbt.__instances[id(tracker)]._next()
 
 	def __new__(cls, iterable=None, **kwargs):

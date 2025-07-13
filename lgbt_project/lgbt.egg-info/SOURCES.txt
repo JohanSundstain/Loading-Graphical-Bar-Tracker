@@ -11,6 +11,4 @@ lgbt.egg-info/PKG-INFO
 lgbt.egg-info/SOURCES.txt
 lgbt.egg-info/dependency_links.txt
 lgbt.egg-info/top_level.txt
-tests/test_arguments.py
-tests/test_init.py
-tests/test_update.py
+tests/test_bars.py

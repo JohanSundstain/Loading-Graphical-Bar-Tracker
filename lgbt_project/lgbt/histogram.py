@@ -1,9 +1,29 @@
 from math import ceil, fabs 
 from collections import deque
+import time
 
 from numpy import arange
 
 from lgbt.consts import COLS, upper_bound, paint, cursor
+
+
+class DrawLimiter():
+	def __init__(self, interval):
+		self._interval = interval
+		self._last_update = None
+	
+	def __call__(self, func):
+		def wrapper(*args, **kwargs):
+			if self._last_update == None:
+				self._last_update = time.perf_counter()
+			
+			interval = time.perf_counter() - self._last_update
+			if interval > self._interval:
+				self._last_update = time.perf_counter()
+				func(*args, **kwargs)
+				return
+
+		return wrapper
 
 class Gist():
 	def __init__(self, size=(5,14), gap=' ', max_value=1.0, fix_value=None, coord=(1,1)):
@@ -17,6 +37,8 @@ class Gist():
 		self._last_values = deque([0.0] * self._size[1], maxlen=self._size[1])
 		self._current_column = 0
 		self._y_label = [0.0] * self._size[0] 
+		self._last_update = None
+		self._draw_interval = 0.1
 		self._update_y_label()
 
 	def _update_y_label(self):
@@ -35,7 +57,6 @@ class Gist():
 			parts.append(self._paint(str=str_iterable[i], index=i))
 		return "".join(parts)
 
-	
 	def _paint(self, str, index):
 		return paint(str=str, color=self._colours[index], count=1)
 
@@ -72,13 +93,19 @@ class Gist():
 			return (" " * (self.size[0] - up_bound) ) + (upper_bound(k - low_bound)) + (COLS[1.0] * low_bound)
 		
 	def next(self):
-		if self._current_column < self._size[1] - 1:
-			self._current_column += 1
-		else:
-			self._table.append([["*"]*self._size[0]])
-			self._last_values.append(0.0) 
-			self._colours.append('RED')
-	
+		if self._last_update == None:
+			self._last_update = time.perf_counter()
+		
+		interval = time.perf_counter() - self._last_update
+		if interval > self._draw_interval:
+			self._last_update = time.perf_counter()
+			if self._current_column < self._size[1] - 1:
+				self._current_column += 1
+			else:
+				self._table.append([[" "]*self._size[0]])
+				self._last_values.append(0.0) 
+				self._colours.append('RED')
+		
 
 	@property
 	def y_label(self):
@@ -101,15 +128,17 @@ class Gist():
 	def size(self, value):
 		self._size = value
 
-class Window():
+class Window:
+	__draw_interval = 0.1
 	def __init__(self, obj, coord=(1,1)):
 		self._size = ( obj.size[0], obj.size[1] + 2 )
-		self._coord = coord # column, row
+		self._coord = coord
 		self._obj = obj
 		self._obj.coord = (self._coord[0] + 6, self._coord[1] + 1)
 		if not hasattr(obj, "draw") or not hasattr(obj, "update"): 
 			raise ValueError("Invalid object to draw in Window")
-		
+	
+	@DrawLimiter(0.1)
 	def draw(self):
 		y_label = self._obj.y_label
 
@@ -134,6 +163,7 @@ class Window():
 	def update(self, value):
 		self._obj.update(value)
 
+	@DrawLimiter(0.1)
 	def next(self):
 		self._obj.next()
 
