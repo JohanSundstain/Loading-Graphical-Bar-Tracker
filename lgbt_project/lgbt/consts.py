@@ -1,9 +1,6 @@
 PH = '█'
 BIG=63
 SHORT=21
-BEGIN = '\033[H'
-RESET ='\033[0m'
-CLEAN = '\033[K'
 
 # set column and row
 def cursor(column, row):
@@ -73,9 +70,9 @@ def paint(str, color, count, background=None):
 	Format string with color
 	"""
 	if background:
-		return f"{COLOURS[color]}{BACHGROUND[background]}{str}{RESET}" * count
+		return f"{COLOURS[color]}{BACHGROUND[background]}{str}{HAND_KEYS['RESET']}" * count
 	
-	return f"{COLOURS[color]}{str}{RESET}" * count
+	return f"{COLOURS[color]}{str}{HAND_KEYS['RESET']}" * count
 
 
 def rotate_left(s, n):
