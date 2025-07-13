@@ -3,8 +3,8 @@ import time
 
 from math import sin
 
-from basicobjects import ClassicBar, TextLabel, ConsoleObject, LegacyBar, GPUBar, CPUBar
-from gist import Gist, Window
+from lgbt.basicobjects import ClassicBar, TextLabel, ConsoleObject, LegacyBar, GPUBar, CPUBar
+from lgbt.histogram import Gist, Window
 
 # [DESC] [PERCENT] [BAR] [TIME, ITER]
 class DynemicBar(ConsoleObject):

@@ -1,11 +1,8 @@
 import time
-import sys
 import inspect
 import os
-
-from bar import DynemicBar, AdvancedBar
-from basicobjects import Tracker
-
+from lgbt.bar import DynemicBar, AdvancedBar
+from lgbt.basicobjects import Tracker
 
 class lgbt():
 	__instances = {}
@@ -143,25 +140,3 @@ class lgbt():
 				self._draw()
 				last_update = time.perf_counter()
 		print("")
-
-
-def test_advanced():
-	import math
-	func = lambda x: math.cos(x)
-	y = 0.0
-	dx = 0.25
-	x = lgbt.tracker()
-	for e in range(100):
-		x.item = 0.0
-		for i in lgbt(range(100), desc="Train", mode='ita', tracker=x):
-			x.item = func(y)
-			y += dx
-			time.sleep(0.5)
-		lgbt.step(x)
-
-		for j in lgbt(range(77), mode='rue'):
-			time.sleep(0.02)
-
-
-if __name__ == "__main__":
-	test_advanced()

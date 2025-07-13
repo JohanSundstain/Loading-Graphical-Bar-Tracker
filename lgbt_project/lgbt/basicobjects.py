@@ -7,7 +7,7 @@ import threading
 import GPUtil
 from cpuinfo import get_cpu_info
 
-from consts import cursor, SHORT_FLAGS,BIG_FLAGS, HAND_KEYS, HEROES
+from .consts import cursor, SHORT_FLAGS,BIG_FLAGS, HAND_KEYS, HEROES
 
 class Anim():
 	def __init__(self, list_anim):
