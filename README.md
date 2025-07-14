@@ -1,4 +1,4 @@
-# 🌈 Rainbow TQDM - LGBT (Loading Graphical Bar Tracker)
+# 🌈 Loading Graphical Bar Tracker
 > ⚠️ **Disclaimer**  
 > This is not propaganda. Any resemblance to real abbreviations or symbols is purely coincidental.
 
