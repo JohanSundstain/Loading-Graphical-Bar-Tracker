@@ -26,10 +26,10 @@ class DrawLimiter():
 		return wrapper
 
 class Gist():
-	def __init__(self, size=(5,14), gap=' ', max_value=1.0, fix_value=None, coord=(1,1)):
+	def __init__(self, size=(5,14), gap=' ', max_value=0.5, fix=True, coord=(1,1)):
 		self._size = size
-		self._fix_value = fix_value
-		self._max_value = max_value if fix_value == None else fix_value
+		self._fix = fix
+		self._max_value = max_value
 		self._gap = gap
 		self._coord = coord 
 		self._table = deque([[" "]*self._size[0]] * self._size[1], maxlen=self._size[1])  
@@ -37,8 +37,6 @@ class Gist():
 		self._last_values = deque([0.0] * self._size[1], maxlen=self._size[1])
 		self._current_column = 0
 		self._y_label = [0.0] * self._size[0] 
-		self._last_update = None
-		self._draw_interval = 0.1
 		self._update_y_label()
 
 	def _update_y_label(self):
@@ -70,12 +68,15 @@ class Gist():
 	def update(self, value):
 		self._colours[self._current_column] = 'RED' if value > 0 else 'BLUE'
 		value = fabs(value)
-		if fabs(value) > self._max_value:
-			self._max_value *= 2
-			self._update_y_label()
-			for i in range(self._current_column):
-				self._table[i] = self._create_column(self._last_values[i])
-
+		if (value > self._max_value):
+			if not self._fix:
+				self._max_value *= 2
+				self._update_y_label()
+				for i in range(self._current_column):
+					self._table[i] = self._create_column(self._last_values[i])
+			else:
+				value = self._max_value
+	
 		self._last_values[self._current_column] = value	
 		self._table[self._current_column] = self._create_column(value)
 		
@@ -93,18 +94,12 @@ class Gist():
 			return (" " * (self.size[0] - up_bound) ) + (upper_bound(k - low_bound)) + (COLS[1.0] * low_bound)
 		
 	def next(self):
-		if self._last_update == None:
-			self._last_update = time.perf_counter()
-		
-		interval = time.perf_counter() - self._last_update
-		if interval > self._draw_interval:
-			self._last_update = time.perf_counter()
-			if self._current_column < self._size[1] - 1:
-				self._current_column += 1
-			else:
-				self._table.append([[" "]*self._size[0]])
-				self._last_values.append(0.0) 
-				self._colours.append('RED')
+		if self._current_column < self._size[1] - 1:
+			self._current_column += 1
+		else:
+			self._table.append([[" "]*self._size[0]])
+			self._last_values.append(0.0) 
+			self._colours.append('RED')
 		
 
 	@property
@@ -129,7 +124,6 @@ class Gist():
 		self._size = value
 
 class Window:
-	__draw_interval = 0.1
 	def __init__(self, obj, coord=(1,1)):
 		self._size = ( obj.size[0], obj.size[1] + 2 )
 		self._coord = coord

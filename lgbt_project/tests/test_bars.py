@@ -9,7 +9,7 @@ def test_advanced():
 	x = lgbt.tracker()
 	for e in range(10):
 		x.item = 0.0
-		for i in lgbt(range(50000), desc="COS", mode='ita', tracker=x):
+		for i in lgbt(range(50000), desc="COS", desc_hist="COSINUS GRAPH", mode='ita', tracker=x, max_value=0.1):
 			x.item = func(y)
 			y += dx
 			lgbt.step(x)

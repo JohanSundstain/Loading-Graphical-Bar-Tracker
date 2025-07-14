@@ -5,6 +5,7 @@ from math import sin
 
 from lgbt.basicobjects import ClassicBar, TextLabel, ConsoleObject, LegacyBar, GPUBar, CPUBar
 from lgbt.histogram import Gist, Window
+from lgbt.consts import paint, HAND_KEYS
 
 # [DESC] [PERCENT] [BAR] [TIME, ITER]
 class DynemicBar(ConsoleObject):
@@ -30,16 +31,18 @@ class DynemicBar(ConsoleObject):
 			self._long_bar.draw()
 
 class AdvancedBar(ConsoleObject):
-	def __init__(self, total, desc='', hero='rainbow', mode='default'):
+	def __init__(self, total, desc='', desc_hist='', hero='rainbow', mode='default', max_value=0.5, fix=True):
 		super(AdvancedBar, self).__init__()
 		self._timer = time.perf_counter()
 
-		self._window = Window(Gist())
+		self._window = Window(Gist(max_value=max_value, fix=fix))
 		self._shift_column = self._window.size[1]
 
 		self._classic_label = TextLabel(desc=desc, hero=hero, coord=(self._shift_column + 2, 2), n=5)
 		self._gpu_label = TextLabel("GPU", hero='gpu', coord=(self._shift_column + 2, 4), n=5)
 		self._cpu_label = TextLabel("CPU", hero='cpu', coord=(self._shift_column + 2, 6), n=5)
+
+		self._window_label = TextLabel(desc=desc_hist, hero='histogram', coord=(5, 8), n=20)
 
 		self._shift_column += len(self._classic_label) + 4
 		
@@ -59,6 +62,8 @@ class AdvancedBar(ConsoleObject):
 		self._classic_bar.draw()
 		self._gpu_label.draw()
 		self._cpu_label.draw()
+		self._window_label.draw()
+
 
 	def update(self, value):
 		anim_speed = (time.perf_counter() - self._timer) * 5

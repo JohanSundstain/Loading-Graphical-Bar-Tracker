@@ -1,8 +1,10 @@
 import time
 import inspect
 import os
+
 from lgbt.bar import DynemicBar, AdvancedBar
 from lgbt.basicobjects import Tracker
+from lgbt.consts import HEROES, BIG_FLAGS
 
 class lgbt():
 	__instances = {}
@@ -15,9 +17,15 @@ class lgbt():
 	def step(tracker):
 		if type(tracker) != Tracker:
 			raise ValueError("Invalid type of tracker")
-
-		
 		lgbt.__instances[id(tracker)]._next()
+	
+	@staticmethod
+	def heroes():
+		print(HEROES)
+
+	@staticmethod
+	def modes():
+		print(list(BIG_FLAGS.keys()))
 
 	def __new__(cls, iterable=None, **kwargs):
 		os.system("cls")
@@ -46,7 +54,16 @@ class lgbt():
 
 		self._initialized = True
 
-	def __init__advanced__(self, iterable=None, total=None, desc="", miniter=2500, mininterval=0.1, hero='rainbow', mode='default', tracker=None):
+	def __init__advanced__(self, iterable=None, 
+						   total=None, desc="",
+						   desc_hist="red:+ blue:-",
+						   miniter=2500,
+						   mininterval=0.1,
+						   hero='rainbow', 
+						   mode='default',
+						   tracker=None,
+						   fix=True,
+						   max_value=0.5):
 		self._iterable = iterable
 		self._total = total
 		if inspect.isgenerator(self._iterable):
@@ -57,7 +74,13 @@ class lgbt():
 
 		if type(tracker) == Tracker:
 			self._tracker = tracker
-			self._bar = AdvancedBar(total=self._total, hero=hero, desc=desc, mode=mode)
+			self._bar = AdvancedBar(total=self._total,
+						            hero=hero,
+									desc=desc,
+									desc_hist=desc_hist,
+									mode=mode, 
+									fix=fix, 
+									max_value=max_value)
 		else:
 			raise ValueError("Invalid type of tracker")
 		
@@ -110,6 +133,7 @@ class lgbt():
 			return
 		
 		self._draw()
+
 
 	def _draw(self):
 		self._bar.update(self._current_iter)
