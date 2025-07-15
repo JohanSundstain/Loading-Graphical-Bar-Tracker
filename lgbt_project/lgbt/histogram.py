@@ -5,6 +5,7 @@ import time
 from numpy import arange
 
 from lgbt.consts import COLS, upper_bound, paint, cursor
+from lgbt.basicobjects import ConsoleObject
 
 
 class DrawLimiter():
@@ -25,13 +26,13 @@ class DrawLimiter():
 
 		return wrapper
 
-class Gist():
+class Histogram(ConsoleObject):
 	def __init__(self, size=(5,14), gap=' ', max_value=0.5, fix=True, coord=(1,1)):
+		super(Histogram, self).__init__(coord=coord)
 		self._size = size
 		self._fix = fix
 		self._max_value = max_value
 		self._gap = gap
-		self._coord = coord 
 		self._table = deque([[" "]*self._size[0]] * self._size[1], maxlen=self._size[1])  
 		self._colours = deque(['RED'] * self._size[1], maxlen=self._size[1])
 		self._last_values = deque([0.0] * self._size[1], maxlen=self._size[1])
@@ -59,11 +60,11 @@ class Gist():
 		return paint(str=str, color=self._colours[index], count=1)
 
 	def draw(self):
-		cursor(1,1)
+		self.cursor(1,1)
 		result = list(zip(*list(self._table)))
 		for i in range(len(result)):
-			cursor(self._coord[0], self._coord[1]+i)
-			print(self._advanced_join(result[i]))
+			self.cursor(self._coord[0], self._coord[1]+i)
+			self.put_in_buffer(self._advanced_join(result[i]))
 
 	def update(self, value):
 		self._colours[self._current_column] = 'RED' if value > 0 else 'BLUE'
@@ -123,10 +124,10 @@ class Gist():
 	def size(self, value):
 		self._size = value
 
-class Window:
+class Window(ConsoleObject):
 	def __init__(self, obj, coord=(1,1)):
+		super(Window, self).__init__(coord=coord)
 		self._size = ( obj.size[0], obj.size[1] + 2 )
-		self._coord = coord
 		self._obj = obj
 		self._obj.coord = (self._coord[0] + 6, self._coord[1] + 1)
 		if not hasattr(obj, "draw") or not hasattr(obj, "update"): 
@@ -145,14 +146,15 @@ class Window:
 		result_y_label = list(zip(*[y_label]))
 
 		for i in range(len(result_y_label)):
-			cursor(self._coord[0], self._coord[1] + 1 + i)
-			print(''.join(result_y_label[i]),end="")
+			self.cursor(self._coord[0], self._coord[1] + 1 + i)
+			self.put_in_buffer(''.join(result_y_label[i]))
 
 		for i in range(len(result_bounds)):
-			cursor(self._coord[0]+4, self._coord[1] + i)
-			print(''.join(result_bounds[i]), end="")
+			self.cursor(self._coord[0]+4, self._coord[1] + i)
+			self.put_in_buffer(''.join(result_bounds[i]))
 		
 		self._obj.draw()
+		self._obj.flush(self._buffer)
 
 	def update(self, value):
 		self._obj.update(value)

@@ -3,11 +3,12 @@ import time
 import os
 import psutil
 import threading
+import sys
 
 import GPUtil
 from cpuinfo import get_cpu_info
 
-from lgbt.consts import cursor, SHORT_FLAGS,BIG_FLAGS, HAND_KEYS, HEROES
+from lgbt.consts import SHORT_FLAGS,BIG_FLAGS, HAND_KEYS, HEROES
 
 class Anim():
 	def __init__(self, list_anim):
@@ -22,6 +23,7 @@ class ConsoleObject():
 		self._coord = coord
 		self._time = None
 		self._value = None
+		self._buffer = []
 
 	@property
 	def time(self):
@@ -48,6 +50,21 @@ class ConsoleObject():
 		if self._time == None:
 			self._time = time.perf_counter()
 		self._value = value
+		
+	def cursor(self, column, row):
+		self._buffer.append(f"\033[{row};{column}H")
+
+	def put_in_buffer(self, value):
+		self._buffer.append(value)
+
+	def flush(self, buffer=None):
+		if buffer == None:
+			sys.stdout.write("".join(self._buffer))
+			sys.stdout.flush()
+			self._buffer.clear()
+		else:
+			buffer.extend(self._buffer)
+			self._buffer.clear()
 		
 
 class TextLabel(ConsoleObject):
@@ -81,10 +98,19 @@ class TextLabel(ConsoleObject):
 	def desc(self):
 		return self._hero + " " + self._update_func()
 
+	@desc.setter
+	def desc(self, value):
+		self._desc = value
+		if self._n < len(self._desc):
+			self._anim = Anim(self._create_string_anim(self._desc)) 
+			self._update_func = lambda: self._anim(self._value)[:self._n]
+		else:
+			self._update_func = lambda: self._desc + (" " * (self._n - len(self._desc)))
+
 	def draw(self):
-		cursor(self._coord[0], self._coord[1])
-		print(self._hero, end=" ")
-		print(self._update_func(), end="")
+		self.cursor(self._coord[0], self._coord[1])
+		self.put_in_buffer(self._hero + " ")
+		self.put_in_buffer(self._update_func())
 
 	def update(self, value):
 		super().update(value)
@@ -96,7 +122,8 @@ class Bar(ConsoleObject):
 	def __init__(self, total, mode, type='long', coord=(1, 1)):
 		super(Bar, self).__init__(coord)
 		self._bar = SHORT_FLAGS[mode].split(HAND_KEYS['RESET']) if type == 'short' else BIG_FLAGS[mode].split(HAND_KEYS['RESET'])
-		self._bar_width = 21 if type == 'short' else 63
+		self._bar.pop()
+		self._bar_width = 63 if type == 'long' else 21
 		self._part_bars = []
 		self._total = total
 		self._start_time = None
@@ -113,7 +140,7 @@ class Bar(ConsoleObject):
 		curr_str = ""
 		for i, simb in enumerate(self._bar, 1):
 			curr_str += simb
-			self._part_bars.append((curr_str + HAND_KEYS['RESET']) + (" " * (n-i)))
+			self._part_bars.append((curr_str + HAND_KEYS['RESET']) + (" " * (n - i)) )
 
 	def _translate_count(self, iter):
 		if iter >= 1000000:
@@ -138,13 +165,13 @@ class Bar(ConsoleObject):
 	def update(self, value):
 		super().update(value)
 		self._stats['percent'] = (self._value / self._total) * 100  
-		self._stats['filled']  = round(self._value / self._total * (self._bar_width-2))
+		self._stats['filled']  = round(self._value / self._total * (len(self._bar)-1))
 
 	def draw(self):
-		cursor(self._coord[0], self._coord[1])
+		self.cursor(self._coord[0], self._coord[1])
 		percent = self._stats['percent'] 
 		filled = self._stats['filled']
-		print(f"{percent:03.0f}% {self._part_bars[filled]}",end=HAND_KEYS['CLEAN'])		
+		self.put_in_buffer(f"{percent:03.0f}% {self._part_bars[filled]}")		
 
 	def __len__(self):
 		return self._bar_width + 5
@@ -163,13 +190,13 @@ class ClassicBar(Bar):
 	def draw(self):
 		super().draw()
 		shift = super().__len__()
-		cursor(self.coord[0]+shift + 2, self.coord[1])
+		self.cursor(self.coord[0]+shift + 2, self.coord[1])
 		passed_time = self._translate_time(self._stats['passed_time'])
 		remaining_time = self._translate_time(self._stats['remaining_time'])
 		speed =  self._translate_count(self._stats['speed'])
 		current_iter = self._translate_count(self._stats['current_iter'])
 		total = self._translate_count(self._stats['total_iter'])
-		print(f"[{current_iter}/{total}, {passed_time}<{remaining_time}, {speed}it/s]", end=HAND_KEYS['CLEAN'])
+		self.put_in_buffer(f"[{current_iter}/{total}, {passed_time}<{remaining_time}, {speed}it/s]{HAND_KEYS['CLEAN']}")
 
 	def update(self, value):
 		super().update(value)
@@ -192,14 +219,13 @@ class LegacyBar(ClassicBar):
 		speed =  self._translate_count(self._stats['speed'])
 		current_iter = self._translate_count(self._stats['current_iter'])
 		total = self._translate_count(self._stats['total_iter'])
-		print(f"\r{desc}{percent:03.0f}% {self._part_bars[filled]} {current_iter}/{total} [{passed_time}<{remaining_time}, {speed}it/s]", end=HAND_KEYS["CLEAN"])
+		self.put_in_buffer(f"\r{desc}{percent:03.0f}% {self._part_bars[filled]} {current_iter}/{total} [{passed_time}<{remaining_time}, {speed}it/s]{HAND_KEYS["CLEAN"]}")
 
 	def update(self, value):
 		super().update(value)
 		anim_speed = (time.perf_counter() - self._time) * 10
 		self._text_label.update(anim_speed)
 
-	
 class GPUBar(Bar):
 	def __init__(self, total=100, mode='nvidia', type='short', coord=(1, 1), device_id=0):
 		super(GPUBar, self).__init__(100, 'nvidia', 'short', coord)
@@ -231,8 +257,8 @@ class GPUBar(Bar):
 	def draw(self):
 		super().draw()
 		shift = super().__len__()
-		cursor(self.coord[0]+shift+2, self.coord[1])
-		print(f"[{self._stats['mem_used']:.0f}/{self._stats['mem_total']:.0f}MB]", end=HAND_KEYS['CLEAN'])
+		self.cursor(self.coord[0]+shift+2, self.coord[1])
+		self.put_in_buffer(f"[{self._stats['mem_used']:.0f}/{self._stats['mem_total']:.0f}MB]{HAND_KEYS['CLEAN']}")
 
 class CPUBar(Bar):
 	def __init__(self,  mode='default', type='short', coord=(1, 1), total=100):
@@ -244,7 +270,7 @@ class CPUBar(Bar):
 		self._process = psutil.Process(self._pid)
 		self._cpu_cores = psutil.cpu_count(logical=True)
 		self._stats.update({
-			'process_cpu' : self._process.cpu_percent(interval=0.1),
+			'process_cpu' : 0.0,
 			'mem_total' :  psutil.virtual_memory().total,
 			'mem_used' : psutil.virtual_memory().used})
 		
@@ -264,8 +290,8 @@ class CPUBar(Bar):
 	def draw(self):
 		super().draw()
 		shift = super().__len__()
-		cursor(self.coord[0]+shift+2, self.coord[1])
-		print(f"[{self._stats['mem_used']/ (1024**2):.0f}/{self._stats['mem_total']/(1024**2):.0f}MB]", end=HAND_KEYS['CLEAN'])
+		self.cursor(self.coord[0]+shift+2, self.coord[1])
+		self.put_in_buffer(f"[{self._stats['mem_used']/ (1024**2):.0f}/{self._stats['mem_total']/(1024**2):.0f}MB]{HAND_KEYS['CLEAN']}")
 
 class Tracker:
 	def __init__(self, number=None):

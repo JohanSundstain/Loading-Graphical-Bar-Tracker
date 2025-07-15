@@ -6,6 +6,9 @@ SHORT=21
 def cursor(column, row):
 	print(f"\033[{row};{column}H", end="")
 
+def cursor_str(column, row):
+	return f"\033[{row};{column}H"
+
 def cursor_str(culumn, row):
 	return "\033[{row};{column}H"
 
@@ -101,11 +104,11 @@ def upper_bound(value):
 
 # 63 length all strings
 BIG_FLAGS =  {
-			'default': paint(PH,'RED', 9) + paint(PH,'ORANGE', 9) + paint(PH,'YELLOW', 9) + paint(PH,'GREEN', 9) + paint(PH,'BRIGHT BLUE', 9) + paint(PH, 'BLUE', 9) + paint(PH, 'PURPLE', 9),
+			'white' : paint(PH, 'WHITE', 63),
+			'rainbow': paint(PH,'RED', 9) + paint(PH,'ORANGE', 9) + paint(PH,'YELLOW', 9) + paint(PH,'GREEN', 9) + paint(PH,'BRIGHT BLUE', 9) + paint(PH, 'BLUE', 9) + paint(PH, 'PURPLE', 9),
 			'usa': repeat(paint(PH,'BLUE', 1) + paint('⋆','WHITE', 1, 'BLUE'), 10)  + paint(PH,'BLUE', 1) + repeat(paint(PH,'RED',1) + paint(PH,'WHITE',1), 21),
 			'chn': paint(PH,'RED', 1) + paint('★ ','YELLOW', 1, 'RED') + repeat(paint(PH,'RED',1) + paint('⭑','YELLOW', 1,'RED'), 4) + paint(PH, 'RED', 52),
 
-			'tur': paint(PH, 'RED', 9) + paint('☪ ','WHITE',  1, 'RED')  + paint(PH, 'RED', 52),
 			'ussr':paint(PH,'RED',  9) + paint('☭ ','YELLOW', 1, 'RED') + paint(PH,'RED', 52),
 
 			'rus': paint(PH,'WHITE', 21) + paint(PH,'BLUE',   21) + paint(PH,'RED',    21), 
@@ -121,24 +124,15 @@ BIG_FLAGS =  {
 
 			'eng': paint('━', 'RED',   31, 'WHITE') + paint('╋','RED',     1, 'WHITE')  + paint('━', 'RED', 31,'WHITE'),
 			'jpn': paint(PH,'WHITE', 31)            + paint('●','RED',     1, 'WHITE')  + paint(PH,'WHITE', 31),
-			'kaz': paint(PH,'BLUE', 30)             + paint('☀️ ','YELLOW', 1, 'BLUE')  + paint(PH,'BLUE',  30),
-
-			'mex': paint(PH,'GREEN', 21) + paint(PH,'WHITE', 9) + paint('🦅 ','WHITE', 1, 'WHITE') + paint(PH,'WHITE', 9) + paint(PH,'RED', 21),
-			'ind': paint(PH,'ORANGE',21) + paint(PH,'WHITE', 9) + paint('🛞  ','BLUE',  1,'WHITE')  + paint(PH,'WHITE', 9) + paint(PH,'GREEN',21),
-
-			'esp': paint(PH,'RED', 17)   + paint(PH,'YELLOW', 13)  + paint('👑 ','WHITE', 1, 'YELLOW') + paint(PH,'YELLOW', 13) + paint(PH,'RED', 17),
-			'can': paint(PH,'RED', 17)   + paint(PH,'WHITE',  13)  + paint('🍁 ','WHITE', 1,'WHITE')   + paint(PH,'WHITE', 13)  + paint(PH,'RED', 17),
-
-			'isr': paint(PH,'WHITE', 5) + paint(PH,'BLUE', 9)  + paint(PH,'WHITE', 16) + paint(' ✡ ','BLUE', 1, 'WHITE') + paint(PH,'WHITE', 16) + paint(PH,'BLUE', 9) + paint(PH,'WHITE', 5)
 			}
 
 # 21 length all strings
 SHORT_FLAGS =  {
-			'default': paint(PH,'RED', 3) + paint(PH,'ORANGE', 3) + paint(PH,'YELLOW', 3) + paint(PH,'GREEN', 3) + paint(PH,'BRIGHT BLUE', 3) + paint(PH, 'BLUE', 3) + paint(PH, 'PURPLE', 3),
+			'white' : paint(PH,'WHITE', 21),
+			'rainbow': paint(PH,'RED', 3) + paint(PH,'ORANGE', 3) + paint(PH,'YELLOW', 3) + paint(PH,'GREEN', 3) + paint(PH,'BRIGHT BLUE', 3) + paint(PH, 'BLUE', 3) + paint(PH, 'PURPLE', 3),
 			'usa': repeat(paint(PH,'BLUE', 1) + paint('⋆','WHITE', 1, 'BLUE'), 4)  + paint(PH,'BLUE', 1) + repeat(paint(PH,'RED',1) + paint(PH,'WHITE',1), 6),
 			'chn': paint(PH,'RED', 1) + paint('★ ','YELLOW', 1, 'RED') + repeat(paint(PH,'RED',1) + paint('⭑','YELLOW', 1,'RED'), 3) + paint(PH, 'RED', 12),
 
-			'tur': paint(PH, 'RED', 1) + paint('☪ ','WHITE',  1, 'RED')  + paint(PH, 'RED', 18),
 			'ussr':paint(PH,'RED',  1) + paint('☭ ','YELLOW', 1, 'RED') + paint(PH,'RED', 18),
 
 			'rus': paint(PH,'WHITE', 7) + paint(PH,'BLUE',   7) + paint(PH,'RED',    7), 
@@ -154,15 +148,6 @@ SHORT_FLAGS =  {
 
 			'eng': paint('━', 'RED',   10, 'WHITE')   + paint('╋','RED',       1, 'WHITE')  + paint('━', 'RED', 10,'WHITE'),
 			'jpn': paint(PH,'WHITE',   10)            + paint('●','RED',       1, 'WHITE')  + paint(PH,'WHITE', 10),
-			'kaz': paint(PH,'BLUE',    9)             + paint('☀️  ','YELLOW', 1, 'BLUE')  + paint(PH,'BLUE',  9),
-
-			'mex': paint(PH,'GREEN', 7) + paint(PH,'WHITE', 2) + paint('🦅 ','WHITE', 1, 'WHITE') + paint(PH,'WHITE', 2) + paint(PH,'RED', 7),
-			'ind': paint(PH,'ORANGE',7) + paint(PH,'WHITE', 2) + paint('🛞  ','BLUE',  1,'WHITE')  + paint(PH,'WHITE', 2) + paint(PH,'GREEN',7),
-
-			'esp': paint(PH,'RED', 6)   + paint(PH,'YELLOW', 3)  + paint('👑 ','WHITE', 1, 'YELLOW') + paint(PH,'YELLOW', 3) + paint(PH,'RED', 6),
-			'can': paint(PH,'RED', 6)   + paint(PH,'WHITE',  3)  + paint('🍁 ','WHITE', 1,'WHITE')   + paint(PH,'WHITE', 3)  + paint(PH,'RED', 6),
-
-			'isr': paint(PH,'WHITE', 2) + paint(PH,'BLUE', 3)  + paint(PH,'WHITE', 4) + paint(' ✡ ','BLUE', 1, 'WHITE') + paint(PH,'WHITE', 4) + paint(PH,'BLUE', 3) + paint(PH,'WHITE', 2),
 
 			'intel' : paint('I', 'BLUE', 1, 'WHITE') + paint('n', 'BLUE', 1, 'WHITE') + paint('t', 'BLUE', 1, 'WHITE')+ paint('e', 'BLUE', 1, 'WHITE')+ paint('L', 'BLUE', 1, 'WHITE') + paint(PH, 'BLUE', 16, 'WHITE'),
 			'amd' : paint('A', 'WHITE', 1, 'RED') +paint('M', 'WHITE', 1, 'RED') +paint('D', 'WHITE', 1, 'RED') + paint('◥', 'WHITE', 1, 'RED') + paint(PH, 'RED', 17),

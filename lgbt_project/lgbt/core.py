@@ -2,7 +2,7 @@ import time
 import inspect
 import os
 
-from lgbt.bar import DynemicBar, AdvancedBar
+from lgbt.bars import DynemicBar, AdvancedBar
 from lgbt.basicobjects import Tracker
 from lgbt.consts import HEROES, BIG_FLAGS
 
@@ -21,19 +21,20 @@ class lgbt():
 	
 	@staticmethod
 	def heroes():
-		print(HEROES)
+		return list(HEROES.keys())
 
 	@staticmethod
 	def modes():
-		print(list(BIG_FLAGS.keys()))
+		return list(BIG_FLAGS.keys())
 
 	def __new__(cls, iterable=None, **kwargs):
-		os.system("cls")
 		tracker = kwargs.get('tracker', None)
 
 		if tracker and id(tracker) in cls.__instances:
+			os.system("cls")
 			instance = cls.__instances[id(tracker)]
 			instance._iterable = iterable
+			instance._bar.desc = kwargs.get('desc', '')
 			instance._bar.reset_time()
 			return instance
 		
@@ -60,7 +61,7 @@ class lgbt():
 						   miniter=2500,
 						   mininterval=0.1,
 						   hero='rainbow', 
-						   mode='default',
+						   mode='white',
 						   tracker=None,
 						   fix=True,
 						   max_value=0.5):
@@ -86,7 +87,14 @@ class lgbt():
 		
 		self.__init__base__(miniter=miniter, mininterval=mininterval)
 
-	def __init__legacy__(self, iterable=None, total=None, desc="", miniter=2500, mininterval=0.1, hero='rainbow', mode='default', tracker=None):
+	def __init__legacy__(self, iterable=None, 
+					  	 total=None, 
+						 desc="", 
+						 miniter=2500, 
+						 mininterval=0.1, 
+						 hero='rainbow', 
+						 mode='white', 
+						 tracker=None):
 		self._iterable = iterable
 		self._total = total
 		if inspect.isgenerator(self._iterable):
@@ -137,9 +145,10 @@ class lgbt():
 
 	def _draw(self):
 		self._bar.update(self._current_iter)
-		if hasattr(self._bar, "update_value") and self._tracker != None:
-			self._bar.update_value(self._tracker.item)
+		if hasattr(self._bar, "update_tracker"):
+			self._bar.update_tracker(self._tracker.item)
 		self._bar.draw()
+		self._bar.flush()
 
 	def __call__(self, iterable, **kwargs):
 		self.__init__(iterable, **kwargs)
