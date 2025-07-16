@@ -2,7 +2,7 @@ import time
 
 from lgbt.core import lgbt
 from gui_test import gui_test
-from lgbt.consts import HEROES, BIG_FLAGS
+from lgbt.consts import HEROES, BIG_FLAGS, HAND_KEYS
 
 modes = lgbt.modes()
 

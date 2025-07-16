@@ -31,7 +31,7 @@ class lgbt():
 		tracker = kwargs.get('tracker', None)
 
 		if tracker and id(tracker) in cls.__instances:
-			os.system("cls")
+			os.system('cls' if os.name == 'nt' else 'clear')  	
 			instance = cls.__instances[id(tracker)]
 			instance._iterable = iterable
 			instance._bar.desc = kwargs.get('desc', '')
@@ -114,7 +114,7 @@ class lgbt():
 		self.__init__base__(miniter=miniter, mininterval=mininterval)
 
 	def __init__base__(self, miniter, mininterval):
-		os.system("cls")
+		os.system('cls' if os.name == 'nt' else 'clear')  
 		self._miniter = miniter
 		self._mininterval = mininterval
 		self._current_iter = 0

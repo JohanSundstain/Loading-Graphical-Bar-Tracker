@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lgbt"
-version = "2.3.3"
+version = "2.3.4"
 description = "Loading Graphical Bar Tracker"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.6"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
@@ -17,10 +17,10 @@ authors = [
     {name = "Johan Sundstain", email = "johansundstainx@gmail.com"}
 ]
 dependencies = [
-    "psutil>=6.1.1",
-    "GPUtil>=1.4.0",
-    "numpy>=2.2.6",
-    "py-cpuinfo>=9.0.0"
+    "psutil",
+    "GPUtil",
+    "numpy",
+    "py-cpuinfo",
 ]
 keywords = ["tracking", "graphics", "performance"]
 urls = {repository = "https://github.com/JohanSundstain/Loading-Graphical-Bar-Tracker"}

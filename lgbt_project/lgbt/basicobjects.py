@@ -219,7 +219,7 @@ class LegacyBar(ClassicBar):
 		speed =  self._translate_count(self._stats['speed'])
 		current_iter = self._translate_count(self._stats['current_iter'])
 		total = self._translate_count(self._stats['total_iter'])
-		self.put_in_buffer(f"\r{desc}{percent:03.0f}% {self._part_bars[filled]} {current_iter}/{total} [{passed_time}<{remaining_time}, {speed}it/s]{HAND_KEYS["CLEAN"]}")
+		self.put_in_buffer(f"\r{desc}{percent:03.0f}% {self._part_bars[filled]} {current_iter}/{total} [{passed_time}<{remaining_time}, {speed}it/s]{HAND_KEYS['CLEAN']}")
 
 	def update(self, value):
 		super().update(value)
