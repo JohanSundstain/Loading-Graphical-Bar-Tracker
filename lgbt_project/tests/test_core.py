@@ -26,12 +26,19 @@ def test_advanced():
 	y = 0.0
 	for m in modes:
 		x.item = 0.0
-		for i in lgbt(range(100), desc=f'{m}', desc_hist="Aboba is all you need ahahah",mode=m, tracker=x, fix=False):
-			x.item = math.sin(y)
+		for i in lgbt(range(1000), desc=f'Cosinus',mode=m, tracker=x, fix=False):
+			x.item = math.cos(y)
 			y += dx
 			time.sleep(0.1)
 			lgbt.step(x)
 
+
+@gui_test
+def test_update():
+	bar = lgbt(total=100)
+	for i in range(100):
+		time.sleep(0.1)
+		bar.update(1)
 
 
 if __name__ == "__main__":
@@ -39,3 +46,4 @@ if __name__ == "__main__":
 	#test_modes()
 	#test_legacy()
 	test_advanced()
+	#test_update()

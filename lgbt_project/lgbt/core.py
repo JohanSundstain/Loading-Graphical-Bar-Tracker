@@ -56,7 +56,8 @@ class lgbt():
 		self._initialized = True
 
 	def __init__advanced__(self, iterable=None, 
-						   total=None, desc="",
+						   total=None,
+						   desc="",
 						   desc_hist="red:+ blue:-",
 						   miniter=2500,
 						   mininterval=0.1,
@@ -113,6 +114,7 @@ class lgbt():
 		self.__init__base__(miniter=miniter, mininterval=mininterval)
 
 	def __init__base__(self, miniter, mininterval):
+		os.system("cls")
 		self._miniter = miniter
 		self._mininterval = mininterval
 		self._current_iter = 0

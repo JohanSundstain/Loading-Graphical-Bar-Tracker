@@ -6,7 +6,6 @@ lgbt/bars.py
 lgbt/basicobjects.py
 lgbt/consts.py
 lgbt/core.py
-lgbt/drawbuffer.py
 lgbt/histogram.py
 lgbt.egg-info/PKG-INFO
 lgbt.egg-info/SOURCES.txt
