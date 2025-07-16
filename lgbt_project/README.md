@@ -5,7 +5,7 @@
  
 ## `lgbt`- Beautiful progress bar with rainbow colors and other ways to customize the appearance
 
-## Update news 2.3.1
+## Update news 2.3.2
 - Optimized the console output method
 - Removed some progress bar mods 
 - Fixed minor errors and bugs.
@@ -23,7 +23,7 @@ from lgbt import lgbt
 for i in lgbt(range(1000000)):
 	pass
 ```
-![](media/standard_use.gif)
+![](https://github.com/JohanSundstain/Loading-Graphical-Bar-Tracker/tree/release/media/standard_use.gif)
 
 ### With update
 ```python
@@ -34,7 +34,7 @@ bar = lgbt(total=1000)
 for i in range(1000):
 	bar.update(1)
 ```
-![](media/update_use.gif)
+![](https://github.com/JohanSundstain/Loading-Graphical-Bar-Tracker/tree/release/media/update_use.gif)
 
 ### Advanced mode
 ```python
@@ -56,7 +56,7 @@ for i in lgbt(range(1000), desc="Cosinus", tracker=tracker, max_value=1.0):
 	lgbt.step(tracker)
 	time.sleep(0.1)
 ```
-![Result](media/advanced_use.gif)
+![Result](https://github.com/JohanSundstain/Loading-Graphical-Bar-Tracker/tree/release/media/advanced_use.gif)
 
 ## Possible parameters
 ### Without tracker
