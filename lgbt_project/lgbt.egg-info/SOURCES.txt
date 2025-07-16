@@ -1,5 +1,4 @@
 LICENSE
-MANIFEST.in
 README.md
 pyproject.toml
 lgbt/__init__.py
@@ -13,9 +12,6 @@ lgbt.egg-info/SOURCES.txt
 lgbt.egg-info/dependency_links.txt
 lgbt.egg-info/requires.txt
 lgbt.egg-info/top_level.txt
-media/advanced_use.gif
-media/standard_use.gif
-media/update_use.gif
 tests/__init__.py
 tests/gui_test.py
 tests/test_bars.py
