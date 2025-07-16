@@ -5,7 +5,7 @@
  
 ## `lgbt`- Beautiful progress bar with rainbow colors and other ways to customize the appearance
 
-## Update news 2.3.2
+## Update news 2.3.3
 - Optimized the console output method
 - Removed some progress bar mods 
 - Fixed minor errors and bugs.
