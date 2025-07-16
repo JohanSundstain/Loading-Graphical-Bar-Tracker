@@ -1,31 +1,34 @@
 [build-system]
-requires = [ "setuptools>=61.0", "wheel",]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "lgbt"
-version = "2.3.1"
+version = "2.3.2"
 description = "Loading Graphical Bar Tracker"
 readme = "README.md"
 requires-python = ">=3.10"
-classifiers = [ "Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent",]
-[[project.authors]]
-name = "Johan Sundstain"
-email = "johansundstainx@gmail.com"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+authors = [
+    {name = "Johan Sundstain", email = "johansundstainx@gmail.com"}
+]
+dependencies = [
+    "psutil>=6.1.1",
+    "GPUtil>=1.4.0",
+    "numpy>=2.2.6",
+    "py-cpuinfo>=9.0.0"
+]
+keywords = ["tracking", "graphics", "performance"]
+urls = {repository = "https://github.com/JohanSundstain/Loading-Graphical-Bar-Tracker"}
 
-[project.license]
-text = "MIT"
-
-[project.urls]
+[tool.setuptools]
+packages = {find = {}}
 
 [tool.pytest.ini_options]
-testpaths = [ "tests",]
+testpaths = ["tests"]
 python_files = "test_*.py"
 addopts = "-v"
-dependencies = [
-	"setuptools==75.8.0",
-	"psutil==6.1.1",
-	"GPUtil==1.4.0",
-	"numpy==2.2.6",
-	"py-cpuinfo==9.0.0"
-	]

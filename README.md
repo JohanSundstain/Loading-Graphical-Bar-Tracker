@@ -23,7 +23,7 @@ from lgbt import lgbt
 for i in lgbt(range(1000000)):
 	pass
 ```
-![](lgbt_project/media/standard_use.gif)
+![](media/standard_use.gif)
 
 ### With update
 ```python
@@ -34,7 +34,7 @@ bar = lgbt(total=1000)
 for i in range(1000):
 	bar.update(1)
 ```
-![](lgbt_project/media/update_use.gif)
+![](media/update_use.gif)
 
 ### Advanced mode
 ```python
@@ -56,7 +56,7 @@ for i in lgbt(range(1000), desc="Cosinus", tracker=tracker, max_value=1.0):
 	lgbt.step(tracker)
 	time.sleep(0.1)
 ```
-![Result](lgbt_project/media/advanced_use.gif)
+![Result](media/advanced_use.gif)
 
 ## Possible parameters
 ### Without tracker
