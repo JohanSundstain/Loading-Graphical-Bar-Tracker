@@ -1,4 +1,0 @@
-psutil
-GPUtil
-numpy
-py-cpuinfo

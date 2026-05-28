@@ -1,8 +1,8 @@
 import time
 import inspect
 
-from consts import FLAGS
-from bar import Bar
+from lgbt.consts import FLAGS
+from lgbt.bar import Bar
 
 class lgbt():	
 

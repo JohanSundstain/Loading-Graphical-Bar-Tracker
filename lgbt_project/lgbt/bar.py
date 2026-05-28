@@ -2,7 +2,7 @@ from abc import abstractmethod
 import time
 import sys
 import os
-from consts import FLAGS, HAND_KEYS
+from lgbt.consts import FLAGS, HAND_KEYS
 
 class ConsoleObject():
 	def __init__(self, coord=(1,1)):
