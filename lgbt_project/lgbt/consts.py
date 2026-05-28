@@ -1,6 +1,5 @@
 PH = '█'
 BIG=63
-SHORT=21
 
 # set column and row
 def cursor(column, row):
@@ -49,26 +48,6 @@ BACHGROUND = {
 		'WHITE':"\033[47m"
 		}
 
-HEROES = {
-		'rainbow': '🌈',
-		'unicorn':'🦄',
-		'teddy': '🧸',
-		'bunny': '🐰',
-		'kitten':'🐱',
-		'sakura':'🌸',
-		'heart':'💖',
-		'gonechar':'🐝',
-		'tralalero':'🦈',
-		'crocodillo': '🐊',
-		'tumtumtum': '🗿',
-		'shimpanzini': '🍌',
-		'trippi':'🦐',
-		'goozinni':'🪿',
-		'gpu': '🎮',
-		'cpu': '🧠',
-		'histogram': '📊'
-		}
-
 COLS = {0.0: ' ', 0.125: '▁', 0.25 : '▂', 0.375: '▃', 0.5: '▄', 0.625: '▅', 0.75 : '▆', 0.875: '▇' , 1.0: '█' }
 COLS_KEYS = list(COLS.keys())
 
@@ -82,18 +61,6 @@ def paint(str, color, count, background=None):
 	return f"{COLOURS[color]}{str}{HAND_KEYS['RESET']}" * count
 
 
-def rotate_left(s, n):
-    n = n % len(s)  
-    return s[n:] + s[:n]
-
-def create_string_anim(str):
-	ext_str = str + (" " * len(str))
-	anim = []
-	for i in range(len(ext_str)):
-		anim.append(rotate_left(ext_str, i))
-	
-	return anim
-
 def repeat(str, count):
 	return str * count
 
@@ -104,7 +71,7 @@ def upper_bound(value):
 			return COLS[COLS_KEYS[i-1]]
 
 # 63 length all strings
-BIG_FLAGS =  {
+FLAGS =  {
 			'white' : paint(PH, 'WHITE', 63),
 			'rainbow': paint(PH,'RED', 9) + paint(PH,'ORANGE', 9) + paint(PH,'YELLOW', 9) + paint(PH,'GREEN', 9) + paint(PH,'BRIGHT BLUE', 9) + paint(PH, 'BLUE', 9) + paint(PH, 'PURPLE', 9),
 			'usa': repeat(paint(PH,'BLUE', 1) + paint('⋆','WHITE', 1, 'BLUE'), 10)  + paint(PH,'BLUE', 1) + repeat(paint(PH,'RED',1) + paint(PH,'WHITE',1), 21),
@@ -125,32 +92,4 @@ BIG_FLAGS =  {
 
 			'eng': paint('━', 'RED',   31, 'WHITE') + paint('╋','RED',     1, 'WHITE')  + paint('━', 'RED', 31,'WHITE'),
 			'jpn': paint(PH,'WHITE', 31)            + paint('●','RED',     1, 'WHITE')  + paint(PH,'WHITE', 31),
-			}
-
-# 21 length all strings
-SHORT_FLAGS =  {
-			'white' : paint(PH,'WHITE', 21),
-			'rainbow': paint(PH,'RED', 3) + paint(PH,'ORANGE', 3) + paint(PH,'YELLOW', 3) + paint(PH,'GREEN', 3) + paint(PH,'BRIGHT BLUE', 3) + paint(PH, 'BLUE', 3) + paint(PH, 'PURPLE', 3),
-			'usa': repeat(paint(PH,'BLUE', 1) + paint('⋆','WHITE', 1, 'BLUE'), 4)  + paint(PH,'BLUE', 1) + repeat(paint(PH,'RED',1) + paint(PH,'WHITE',1), 6),
-			'chn': paint(PH,'RED', 1) + paint('★ ','YELLOW', 1, 'RED') + repeat(paint(PH,'RED',1) + paint('⭑','YELLOW', 1,'RED'), 3) + paint(PH, 'RED', 12),
-
-			'ussr':paint(PH,'RED',  1) + paint('☭ ','YELLOW', 1, 'RED') + paint(PH,'RED', 18),
-
-			'rus': paint(PH,'WHITE', 7) + paint(PH,'BLUE',   7) + paint(PH,'RED',    7), 
-			'ita': paint(PH,'GREEN', 7) + paint(PH,'WHITE',  7) + paint(PH,'RED',    7), 
-			'rue': paint(PH,'BLACK', 7) + paint(PH,'YELLOW', 7) + paint(PH,'WHITE',  7),
-			'deu': paint(PH,'BLACK', 7) + paint(PH,'RED',    7) + paint(PH,'ORANGE', 7),
-			'fra': paint(PH,'BLUE',  7) + paint(PH,'WHITE',  7) + paint(PH,'RED',    7),
-
-			'swe': paint('━', 'YELLOW', 3,'BRIGHT BLUE') + paint('╋','YELLOW', 1, 'BRIGHT BLUE') + paint('━', 'YELLOW', 17,'BRIGHT BLUE'),
-			'fin': paint('━', 'BLUE',   3,'WHITE')       + paint('╋','BLUE',   1, 'WHITE')       + paint('━', 'BLUE',   17,'WHITE'),
-			'nor': paint('━', 'BLUE',   3 ,'RED')         + paint('╋','BLUE',  1, 'RED')         + paint('━', 'BLUE',   17,'RED'),
-			'dnk': paint('━', 'WHITE',  3,'RED')          + paint('╋','WHITE', 1, 'RED')         + paint('━', 'WHITE',  17,'RED'),
-
-			'eng': paint('━', 'RED',   10, 'WHITE')   + paint('╋','RED',       1, 'WHITE')  + paint('━', 'RED', 10,'WHITE'),
-			'jpn': paint(PH,'WHITE',   10)            + paint('●','RED',       1, 'WHITE')  + paint(PH,'WHITE', 10),
-
-			'intel' : paint('I', 'BLUE', 1, 'WHITE') + paint('n', 'BLUE', 1, 'WHITE') + paint('t', 'BLUE', 1, 'WHITE')+ paint('e', 'BLUE', 1, 'WHITE')+ paint('L', 'BLUE', 1, 'WHITE') + paint(PH, 'BLUE', 16, 'WHITE'),
-			'amd' : paint('A', 'WHITE', 1, 'RED') +paint('M', 'WHITE', 1, 'RED') +paint('D', 'WHITE', 1, 'RED') + paint('◥', 'WHITE', 1, 'RED') + paint(PH, 'RED', 17),
-			'nvidia': paint('᪤', 'GREEN', 1, 'BLACK') + paint(PH, 'BLACK', 1)+ paint('n', 'WHITE', 1, 'BLACK')+ paint('v', 'WHITE', 1, 'BLACK')+ paint('i', 'WHITE', 1, 'BLACK')+ paint('d', 'WHITE', 1, 'BLACK')+ paint('i', 'WHITE', 1, 'BLACK')+ paint('a', 'WHITE', 1, 'BLACK')+ paint(PH, 'BLACK', 13)
 			}

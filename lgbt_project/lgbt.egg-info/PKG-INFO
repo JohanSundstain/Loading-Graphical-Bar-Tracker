@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: lgbt
-Version: 2.3.3
+Version: 2.3.4
 Summary: Loading Graphical Bar Tracker
 Author-email: Johan Sundstain <johansundstainx@gmail.com>
 License-Expression: MIT
@@ -8,13 +8,13 @@ Project-URL: repository, https://github.com/JohanSundstain/Loading-Graphical-Bar
 Keywords: tracking,graphics,performance
 Classifier: Programming Language :: Python :: 3
 Classifier: Operating System :: OS Independent
-Requires-Python: >=3.10
+Requires-Python: >=3.6
 Description-Content-Type: text/markdown
 License-File: LICENSE
-Requires-Dist: psutil>=6.1.1
-Requires-Dist: GPUtil>=1.4.0
-Requires-Dist: numpy>=2.2.6
-Requires-Dist: py-cpuinfo>=9.0.0
+Requires-Dist: psutil
+Requires-Dist: GPUtil
+Requires-Dist: numpy
+Requires-Dist: py-cpuinfo
 Dynamic: license-file
 
 # Loading Graphical Bar Tracker

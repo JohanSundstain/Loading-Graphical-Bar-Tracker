@@ -1,6 +1,7 @@
 lgbt/dist
 lgbt/lgbt.egg-info
 lgbt/build
+lgbt/tests
 __pycache__
 .github
 .pytest_cache
