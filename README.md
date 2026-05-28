@@ -41,7 +41,7 @@ for i in range(1000):
 ```python
 from lgbt import lgbt
 
-lgbt(iterable, total, desc, mode, miniter, mininterval, hero)
+lgbt(iterable, total, desc, mode, miniter, mininterval)
 ```
 - `iterable` - Итерируемый объект или генератор.
 - `total` - Число элементов в коллекции, если не указано, пытается посчитать кол-во элементов в коллекции.
